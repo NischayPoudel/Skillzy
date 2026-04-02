@@ -16,6 +16,7 @@ class Message extends Model
         'message',
         'is_read',
         'user_skill_id',
+        'attachment',
     ];
 
     protected $casts = [

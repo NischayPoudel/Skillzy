@@ -19,7 +19,7 @@
         style="padding: 8px 16px; background: #1040C0; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 200ms ease-out; width: 100%;"
         onmouseover="this.style.background='#0D32A4'; this.style.transform='translateY(-1px)';"
         onmouseout="this.style.background='#1040C0'; this.style.transform='translateY(0)';">
-        ✉️ Message
+        Message
     </button>
 
     <!-- Message Modal -->
@@ -30,7 +30,7 @@
                 type="button"
                 onclick="toggleMessageModal('{{ $uniqueId }}')"
                 style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #9ca3af;">
-                ✕
+                ×
             </button>
 
             <!-- Title -->
@@ -46,7 +46,7 @@
             </p>
 
             <!-- Message Form -->
-            <form method="POST" action="{{ route('messages.store') }}" style="display: flex; flex-direction: column; gap: 16px;">
+            <form method="POST" action="{{ route('messages.store') }}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
                 @csrf
 
                 <!-- Hidden Fields -->
@@ -61,14 +61,29 @@
                     @endif
                 @endif
 
+                <!-- Photo Upload -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #1f2937;">Attach Photo (Optional)</label>
+                    <input 
+                        type="file" 
+                        name="attachment" 
+                        id="photo-upload-{{ $uniqueId }}"
+                        accept="image/*"
+                        style="padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 200ms ease-out;"
+                        onchange="previewImage(this, '{{ $uniqueId }}');">
+                    <div id="photo-preview-{{ $uniqueId }}" style="display: none; margin-top: 12px;">
+                        <img id="preview-img-{{ $uniqueId }}" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: cover;">
+                        <button type="button" onclick="clearImage('{{ $uniqueId }}')" style="margin-top: 8px; padding: 6px 12px; background: #fee2e2; color: #dc2626; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Remove Photo</button>
+                    </div>
+                </div>
+
                 <!-- Message Textarea -->
                 <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label style="font-size: 14px; font-weight: 600; color: #1f2937;">Your Message</label>
+                    <label style="font-size: 14px; font-weight: 600; color: #1f2937;">Your Message (Optional)</label>
                     <textarea 
                         name="message" 
                         placeholder="Type your message here..."
-                        required
-                        style="padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 120px; transition: all 200ms ease-out;"
+                        style="padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 100px; transition: all 200ms ease-out;"
                         onfocus="this.style.borderColor='#1040C0'; this.style.boxShadow='0 0 0 3px rgba(16, 64, 192, 0.08)';"
                         onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"></textarea>
                 </div>
@@ -114,6 +129,27 @@
             } else {
                 modal.style.display = 'none';
             }
+        }
+
+        function previewImage(input, uniqueId) {
+            const preview = document.getElementById('photo-preview-' + uniqueId);
+            const previewImg = document.getElementById('preview-img-' + uniqueId);
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearImage(uniqueId) {
+            const input = document.getElementById('photo-upload-' + uniqueId);
+            const preview = document.getElementById('photo-preview-' + uniqueId);
+            input.value = '';
+            preview.style.display = 'none';
         }
 
         // Close modal when clicking outside

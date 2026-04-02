@@ -93,6 +93,7 @@ Route::middleware('auth')->get('/wallet/callback', [WalletController::class, 'ca
 
 // Messages
 Route::middleware('auth')->get('/messages', [MessageController::class, 'index'])->name('messages.index');
+Route::middleware('auth')->get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
 Route::middleware('auth')->post('/messages', [MessageController::class, 'store'])->name('messages.store');
 
 // Reviews

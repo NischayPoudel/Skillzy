@@ -46,11 +46,17 @@
                          onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
                         
                         <!-- Image Section -->
-                        <a href="{{ route('listings.show', $listing) }}" style="flex: 1; overflow: hidden; background: #f3f4f6; text-decoration: none; display: block; cursor: pointer;">
+                        <a href="{{ route('listings.show', $listing) }}" style="flex: 1; overflow: hidden; background: #f3f4f6; text-decoration: none; display: block; cursor: pointer; min-height: 200px; display: flex; align-items: center; justify-content: center;">
                             @if($listing->skill->icon)
-                                <img src="{{ asset('storage/' . $listing->skill->icon) }}" alt="{{ $listing->skill->name }}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                @if(str_contains($listing->skill->icon, '/') || str_contains($listing->skill->icon, '.'))
+                                    <!-- File path - display as image -->
+                                    <img src="{{ asset('storage/' . $listing->skill->icon) }}" alt="{{ $listing->skill->name }}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                @else
+                                    <!-- Emoji - display centered -->
+                                    <div style="font-size: 48px;">{{ $listing->skill->icon }}</div>
+                                @endif
                             @else
-                                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 32px;">📚</div>
+                                <div style="font-size: 32px; color: #d1d5db; font-weight: 600;">No Image</div>
                             @endif
                         </a>
                         
