@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Bauhaus Design System */
+
+/* Reset defaults with Bauhaus aesthetic */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-canvas text-foreground font-outfit antialiased;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Base typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-black uppercase tracking-tight leading-tight;
+}
+
+h1 {
+  @apply text-4xl sm:text-6xl lg:text-8xl;
+}
+
+h2 {
+  @apply text-3xl sm:text-4xl lg:text-6xl;
+}
+
+h3 {
+  @apply text-2xl sm:text-3xl lg:text-4xl;
+}
+
+p {
+  @apply text-base sm:text-lg leading-relaxed;
+  font-weight: 500;
+}
+
+p {
+  @apply text-base sm:text-lg leading-relaxed;
+  font-weight: 500;
+}
+
+a {
+  @apply transition-colors duration-200 ease-out;
+}
+
+/* Bauhaus Button Component */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 
+           font-bold uppercase tracking-wider rounded-none
+           border-2 border-bauhaus-black
+           shadow-bauhaus
+           transition-all duration-200 ease-out
+           active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
+           hover:opacity-90
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-bauhaus-red text-white;
+  }
+
+  .btn-secondary {
+    @apply bg-bauhaus-blue text-white;
+  }
+
+  .btn-accent {
+    @apply bg-bauhaus-yellow text-bauhaus-black;
+  }
+
+  .btn-outline {
+    @apply bg-white text-bauhaus-black;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-bauhaus-black border-0 shadow-none
+           hover:bg-gray-200/50;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
+  }
+
+  /* Bauhaus Card Component */
+  .card {
+    @apply bg-white border-4 border-bauhaus-black shadow-bauhaus-lg
+           p-6 sm:p-8
+           transition-all duration-200 ease-out
+           hover:-translate-y-1 relative;
+  }
+
+  .card-sm {
+    @apply border-2 shadow-bauhaus-sm p-4;
+  }
+
+  .card-md {
+    @apply border-4 shadow-bauhaus-md p-6;
+  }
+
+  /* Section styling */
+  .section {
+    @apply py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-full {
+    @apply w-full;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto;
+  }
+
+  /* Dividers */
+  .section-divider {
+    @apply border-b-4 border-bauhaus-black;
+  }
+
+  /* Grid systems */
+  .grid-1-2-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+  }
+
+  .grid-1-2-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  .grid-1-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  }
+
+  /* Badge styling - circular indicator */
+  .badge {
+    @apply inline-flex items-center justify-center
+           w-8 h-8 sm:w-10 sm:h-10
+           rounded-full
+           font-bold text-sm
+           bg-bauhaus-yellow text-bauhaus-black
+           border-2 border-bauhaus-black;
+  }
+
+  /* Icon container */
+  .icon-box {
+    @apply flex items-center justify-center
+           w-16 h-16 sm:w-20 sm:h-20
+           rounded-none
+           bg-white
+           border-2 border-bauhaus-black
+           shadow-bauhaus;
+  }
+
+  /* Geometric shape utilities */
+  .shape-triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  .shape-circle {
+    @apply rounded-full;
+  }
+
+  .shape-square {
+    @apply rounded-none;
+  }
+
+  /* Responsive spacing adjustments */
+  @screen lg {
+    .lg-shadow-lg {
+      @apply shadow-bauhaus-lg;
+    }
+    
+    .lg-border-4 {
+      @apply border-4;
+    }
+  }
+
+  @screen sm {
+    .sm-shadow-md {
+      @apply shadow-bauhaus-md;
+    }
+
+    .sm-border-2 {
+      @apply border-2;
+    }
+  }
+}
+
+/* Utility classes for common patterns */
+.uppercase-title {
+  @apply uppercase font-black tracking-tighter leading-tight;
+}
+
+.uppercase-label {
+  @apply uppercase font-bold tracking-widest text-sm;
+}
+
+.text-primary-display {
+  @apply text-4xl sm:text-6xl lg:text-8xl font-black uppercase tracking-tighter leading-tight;
+}
+
+.text-secondary-display {
+  @apply text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight;
+}
+
+/* Bauhaus decorative patterns */
+.pattern-dots {
+  background-image: radial-gradient(#fff 2px, transparent 2px);
+  background-size: 20px 20px;
+}
+
+.pattern-grid {
+  background-image: 
+    linear-gradient(rgba(18, 18, 18, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 18, 18, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* State utilities */
+.transition-bauhaus {
+  @apply transition-all duration-200 ease-out;
+}
+
+.hover-lift {
+  @apply hover:-translate-y-1 transition-bauhaus;
+}
+
+.active-press {
+  @apply active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+}
+
+/* Color utilities */
+.text-red {
+  @apply text-bauhaus-red;
+}
+
+.text-blue {
+  @apply text-bauhaus-blue;
+}
+
+.text-yellow {
+  @apply text-bauhaus-yellow;
+}
+
+.bg-red {
+  @apply bg-bauhaus-red;
+}
+
+.bg-blue {
+  @apply bg-bauhaus-blue;
+}
+
+.bg-yellow {
+  @apply bg-bauhaus-yellow;
+}
