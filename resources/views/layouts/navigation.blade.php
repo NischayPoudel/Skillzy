@@ -241,14 +241,33 @@
                style="text-transform: uppercase; font-size: 0.75rem; text-decoration: none; color: {{ request()->routeIs('about.*') ? '#D02020' : '#1b1b18' }}; font-weight: 600; letter-spacing: 0.5px; transition: color 0.3s ease; padding-bottom: 2px; border-bottom: 2px solid {{ request()->routeIs('about.*') ? '#D02020' : 'transparent' }};">
                 About
             </a>
+            <!-- Notification Icon -->
             <a href="#" 
-               style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; text-decoration: none; transition: all 0.3s ease;">
+               style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; text-decoration: none; transition: all 0.3s ease; position: relative;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #1b1b18;">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     <circle cx="18" cy="8" r="3" fill="#D02020"></circle>
                 </svg>
             </a>
+
+            <!-- Message Icon -->
+            @auth
+            <a href="{{ route('messages.index') }}" 
+               style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; text-decoration: none; transition: all 0.3s ease; position: relative;" title="Messages">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #1b1b18;">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                @php
+                    $unreadCount = Auth::user()->receivedMessages()->where('is_read', 0)->count();
+                @endphp
+                @if($unreadCount > 0)
+                    <span style="position: absolute; top: -2px; right: -2px; background: #D02020; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; border: 2px solid white;">
+                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                    </span>
+                @endif
+            </a>
+            @endauth
 
             @auth
             <a href="{{ route('user.listings.create') }}" 

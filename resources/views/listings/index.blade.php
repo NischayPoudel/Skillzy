@@ -41,31 +41,38 @@
             <!-- Listings Grid -->
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
                 @forelse($listings as $listing)
-                    <a href="{{ route('listings.show', $listing) }}" style="text-decoration: none;">
-                        <div style="aspect-ratio: 1/1; background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: all 200ms ease-out; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
-                             onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,0.15)'; this.style.transform='translateY(-2px)';"
-                             onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: all 200ms ease-out; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
+                         onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,0.15)'; this.style.transform='translateY(-2px)';"
+                         onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
+                        
+                        <!-- Image Section -->
+                        <a href="{{ route('listings.show', $listing) }}" style="flex: 1; overflow: hidden; background: #f3f4f6; text-decoration: none; display: block; cursor: pointer;">
+                            @if($listing->skill->icon)
+                                <img src="{{ asset('storage/' . $listing->skill->icon) }}" alt="{{ $listing->skill->name }}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                            @else
+                                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 32px;">📚</div>
+                            @endif
+                        </a>
+                        
+                        <!-- Info Section -->
+                        <div style="padding: 12px; background: white; border-top: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 8px;">
+                            <a href="{{ route('listings.show', $listing) }}" style="text-decoration: none;">
+                                <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #1f2937; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; transition: color 200ms ease; color: #1040C0;">{{ $listing->skill->name }}</h3>
+                            </a>
+                            <p style="margin: 0; font-size: 12px; color: #6b7280; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $listing->user->name }}</p>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                                <span style="font-size: 12px; font-weight: 700; color: #1f2937;">₹{{ number_format($listing->price, 0) }}</span>
+                                <span style="font-size: 11px; background: #f0f0f0; padding: 3px 6px; border-radius: 4px; color: #6b7280; text-transform: uppercase;">{{ ucfirst($listing->experience_level) }}</span>
+                            </div>
                             
-                            <!-- Image Section -->
-                            <div style="flex: 1; overflow: hidden; background: #f3f4f6;">
-                                @if($listing->skill->icon)
-                                    <img src="{{ asset('storage/' . $listing->skill->icon) }}" alt="{{ $listing->skill->name }}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-                                @else
-                                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 32px;">📚</div>
+                            <!-- Message Button -->
+                            @auth
+                                @if(Auth::user()->id !== $listing->user_id)
+                                    <x-message-modal :listing="$listing" />
                                 @endif
-                            </div>
-                            
-                            <!-- Info Section -->
-                            <div style="padding: 8px; background: white; border-top: 1px solid #e5e7eb;">
-                                <h3 style="margin: 0; font-size: 11px; font-weight: 700; color: #1f2937; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $listing->skill->name }}</h3>
-                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #6b7280; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $listing->user->name }}</p>
-                                <div style="margin-top: 4px; display: flex; align-items: center; justify-content: space-between;">
-                                    <span style="font-size: 11px; font-weight: 700; color: #1f2937;">{{ number_format($listing->price, 0) }}</span>
-                                    <span style="font-size: 10px; background: #f0f0f0; padding: 2px 4px; border-radius: 4px; color: #6b7280; text-transform: uppercase;">{{ ucfirst($listing->experience_level) }}</span>
-                                </div>
-                            </div>
+                            @endauth
                         </div>
-                    </a>
+                    </div>
                 @empty
                     <div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: #6b7280;">
                         {{ __('No listings found') }}

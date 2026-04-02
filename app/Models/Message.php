@@ -15,6 +15,7 @@ class Message extends Model
         'receiver_id',
         'message',
         'is_read',
+        'user_skill_id',
     ];
 
     protected $casts = [
@@ -24,6 +25,11 @@ class Message extends Model
     public function purchase()
     {
         return $this->belongsTo(Purchase::class);
+    }
+
+    public function userSkill()
+    {
+        return $this->belongsTo(UserSkill::class);
     }
 
     public function sender()

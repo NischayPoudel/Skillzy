@@ -983,3 +983,13 @@ tr:hover {
     width: 100%;
   }
 }
+
+/* Blue Triangle Shape */
+.shape-blue-triangle {
+  width: 0;
+  height: 0;
+  border-left: 24px solid transparent;
+  border-right: 24px solid transparent;
+  border-bottom: 42px solid var(--color-blue);
+  display: inline-block;
+}

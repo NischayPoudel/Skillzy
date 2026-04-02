@@ -92,6 +92,7 @@ Route::middleware('auth')->post('/wallet/topup', [WalletController::class, 'topu
 Route::middleware('auth')->get('/wallet/callback', [WalletController::class, 'callback'])->name('wallet.callback');
 
 // Messages
+Route::middleware('auth')->get('/messages', [MessageController::class, 'index'])->name('messages.index');
 Route::middleware('auth')->post('/messages', [MessageController::class, 'store'])->name('messages.store');
 
 // Reviews

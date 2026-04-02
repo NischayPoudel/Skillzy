@@ -111,9 +111,24 @@
                         </p>
                     </div>
 
-                    <a href="#" class="block w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center">
-                        {{ __('View Profile') }}
-                    </a>
+                    @auth
+                        @if(auth()->id() !== $listing->user_id)
+                            <div class="mb-4 flex flex-col gap-2">
+                                <x-message-modal :listing="$listing" />
+                                <a href="#" class="block w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center font-semibold">
+                                    {{ __('View Profile') }}
+                                </a>
+                            </div>
+                        @else
+                            <a href="#" class="block w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center font-semibold">
+                                {{ __('View Profile') }}
+                            </a>
+                        @endif
+                    @else
+                        <a href="#" class="block w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-center font-semibold">
+                            {{ __('View Profile') }}
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>

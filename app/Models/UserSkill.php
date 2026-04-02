@@ -35,4 +35,9 @@ class UserSkill extends Model
     {
         return $this->hasMany(Purchase::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

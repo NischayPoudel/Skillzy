@@ -4,7 +4,7 @@
             <!-- Brand -->
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 bg-bauhaus-red rounded-full"></div>
-                <div class="w-12 h-12 bg-bauhaus-blue"></div>
+                <div class="shape-blue-triangle"></div>
                 <div class="w-12 h-12 bg-bauhaus-yellow"></div>
             </div>
 
@@ -26,11 +26,8 @@
         </div>
 
         <!-- Bottom -->
-        <div class="border-t-4 border-bauhaus-red pt-6 pb-4 flex justify-between items-center">
+        <div class="border-t-4 border-bauhaus-red pt-6 pb-4 text-center">
             <p class="text-gray-400 text-sm">&copy; 2026 Skillzy. All rights reserved.</p>
-            @auth
-                <a href="{{ route('profile.edit') }}" class="text-gray-300 hover:text-white transition-colors text-sm">Profile</a>
-            @endauth
         </div>
     </div>
 </footer>
