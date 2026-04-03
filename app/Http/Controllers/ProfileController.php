@@ -23,6 +23,20 @@ class ProfileController extends Controller
     }
 
     /**
+     * Display the user's profile view.
+     */
+    public function show(Request $request): View
+    {
+        $user = $request->user();
+        $skills = $user->skills()->get();
+        
+        return view('profile.show', [
+            'user' => $user,
+            'skills' => $skills,
+        ]);
+    }
+
+    /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse

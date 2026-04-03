@@ -29,6 +29,7 @@ class PurchaseController extends Controller
             $query->where('buyer_id', Auth::id())
                   ->orWhere('seller_id', Auth::id());
         })
+        ->where('status', '!=', 'cancelled')
         ->with('buyer', 'seller', 'userSkill.skill')
         ->latest()
         ->paginate(10);
@@ -80,10 +81,18 @@ class PurchaseController extends Controller
 
     public function update(Request $request, Purchase $purchase): RedirectResponse
     {
-        $this->authorize('update', $purchase);
-        
         $action = $request->input('action');
-
+        
+        // Allow buyers to cancel pending purchases
+        if ($action === 'cancel' && $purchase->status === 'pending') {
+            if (Auth::id() !== $purchase->buyer_id) {
+                abort(403, 'You cannot cancel this purchase');
+            }
+        } else {
+            // For other actions, only seller can perform them
+            $this->authorize('update', $purchase);
+        }
+        
         if ($action === 'accept') {
             $purchase->update(['status' => 'accepted']);
             
@@ -158,6 +167,13 @@ class PurchaseController extends Controller
                 'user_id' => $purchase->buyer_id,
                 'title' => 'Purchase Cancelled',
                 'message' => 'Your purchase request was cancelled.',
+            ]);
+
+            // Also notify seller
+            Notification::create([
+                'user_id' => $purchase->seller_id,
+                'title' => 'Purchase Request Cancelled',
+                'message' => $purchase->buyer->name . ' cancelled their purchase request for ' . $purchase->userSkill->skill->name . '.',
             ]);
 
             return redirect()->route('purchases.show', $purchase)->with('success', 'Purchase cancelled.');

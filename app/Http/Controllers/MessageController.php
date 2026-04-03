@@ -8,7 +8,6 @@ use App\Models\Purchase;
 use App\Models\UserSkill;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -111,7 +110,11 @@ class MessageController extends Controller
         // If purchase-based message
         if ($purchase_id) {
             $purchase = Purchase::findOrFail($purchase_id);
-            $this->authorize('update', $purchase);
+            // Check if user is buyer or seller
+            $isParticipant = $sender->id === $purchase->buyer_id || $sender->id === $purchase->seller_id;
+            if (!$isParticipant) {
+                return back()->with('error', 'You cannot message this purchase');
+            }
             $receiver_id = $sender->id === $purchase->buyer_id ? $purchase->seller_id : $purchase->buyer_id;
         }
         // If skill listing message

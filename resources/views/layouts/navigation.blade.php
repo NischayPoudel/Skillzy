@@ -307,6 +307,10 @@
                     </div>
                     
                     <div class="profile-dropdown-menu" id="profile-menu">
+                        <a href="{{ route('profile.show') }}">
+                            <i class="fas fa-user-circle"></i>
+                            View Profile
+                        </a>
                         <a href="{{ route('profile.edit') }}">
                             <i class="fas fa-edit"></i>
                             Edit Profile
