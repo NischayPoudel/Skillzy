@@ -65,13 +65,20 @@
                 <!-- Call to Action -->
                 @auth
                     @if(auth()->id() !== $listing->user_id)
-                        <form method="POST" action="{{ route('purchases.store') }}" style="margin-bottom: 32px;">
-                            @csrf
-                            <input type="hidden" name="user_skill_id" value="{{ $listing->id }}">
-                            <button type="submit" style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); color: #1a1a1a; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 300ms ease; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);" onmouseover="this.style.boxShadow='0 8px 20px rgba(255, 193, 7, 0.4)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 4px 12px rgba(255, 193, 7, 0.3)'; this.style.transform='translateY(0)';">
-                                Request Listing
-                            </button>
-                        </form>
+                        @if(auth()->user()->coins < $listing->price)
+                            <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 32px;">
+                                <p style="font-weight: 600; color: #dc2626; margin: 0 0 4px 0;">✕ Insufficient Coins</p>
+                                <p style="color: #dc2626; font-size: 14px; margin: 0;">You need {{ number_format($listing->price, 0) }} coins to request this listing. You currently have {{ number_format(auth()->user()->coins, 0) }} coins.</p>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('purchases.store') }}" style="margin-bottom: 32px;">
+                                @csrf
+                                <input type="hidden" name="user_skill_id" value="{{ $listing->id }}">
+                                <button type="submit" style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); color: #1a1a1a; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 300ms ease; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);" onmouseover="this.style.boxShadow='0 8px 20px rgba(255, 193, 7, 0.4)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 4px 12px rgba(255, 193, 7, 0.3)'; this.style.transform='translateY(0)';">
+                                    Request Listing
+                                </button>
+                            </form>
+                        @endif
                     @endif
                 @else
                     <div style="background: #fff3cd; border: 2px solid #FFC107; border-radius: 8px; padding: 16px; margin-bottom: 32px;">

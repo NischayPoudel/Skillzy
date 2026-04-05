@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('My Purchases & Requests') }}
-        </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('My Purchases & Requests') }}
+            </h2>
+            <a href="{{ route('user.listings.management') }}" style="padding: 10px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: 2px solid #000; border-radius: 0; text-decoration: none; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 2px 2px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='2px 2px 0 rgba(0,0,0,0.2)';">
+                💼 Billing & Requests
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">

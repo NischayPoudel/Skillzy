@@ -14,6 +14,8 @@ class Notification extends Model
         'title',
         'message',
         'is_read',
+        'purchase_id',
+        'type',
     ];
 
     protected $casts = [
@@ -23,5 +25,10 @@ class Notification extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class);
     }
 }

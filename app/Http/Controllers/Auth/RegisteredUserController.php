@@ -36,9 +36,17 @@ class RegisteredUserController extends Controller
             'transaction_pin' => ['required', 'string', 'size:4', 'regex:/^[0-9]+$/'],
         ]);
 
+        // Generate username from name
+        $username = strtolower(str_replace(' ', '', $request->name));
+        
+        // Check if username already exists
+        if (User::where('username', $username)->exists()) {
+            return redirect()->back()->withErrors(['name' => 'This username already exists. Please choose a different name.'])->withInput();
+        }
+
         $user = User::create([
             'name' => $request->name,
-            'username' => strtolower(str_replace(' ', '', $request->name)),
+            'username' => $username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone_number' => $request->phone_number,

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <!-- Header -->
         <div class="mb-8 flex items-center justify-between">
             <div>
@@ -33,7 +33,20 @@
                         
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <!-- Notification Type Icon -->
+                                    @if($notification->type === 'purchase_request')
+                                        <span class="text-2xl">📋</span>
+                                    @elseif($notification->type === 'purchase_accepted')
+                                        <span class="text-2xl">✓</span>
+                                    @elseif($notification->type === 'work_completed')
+                                        <span class="text-2xl">🎉</span>
+                                    @elseif($notification->type === 'purchase_cancelled')
+                                        <span class="text-2xl">✕</span>
+                                    @else
+                                        <span class="text-2xl">⚡</span>
+                                    @endif
+
                                     <h3 class="text-lg font-semibold text-gray-900">
                                         {{ $notification->title }}
                                     </h3>
@@ -41,27 +54,61 @@
                                         <span class="inline-block h-3 w-3 bg-blue-500 rounded-full"></span>
                                     @endif
                                 </div>
+
                                 <p class="text-gray-700 mt-2">{{ $notification->message }}</p>
+
+                                <!-- Purchase-related notification details -->
+                                @if($notification->purchase)
+                                    <div class="mt-3 p-3 bg-gray-50 rounded border border-gray-200">
+                                        <p class="text-sm text-gray-600">
+                                            <strong>Skill:</strong> {{ $notification->purchase->userSkill->skill->name }}
+                                        </p>
+                                        <p class="text-sm text-gray-600 mt-1">
+                                            <strong>Amount:</strong> {{ number_format($notification->purchase->amount, 0) }} coins
+                                        </p>
+                                    </div>
+                                @endif
+
                                 <p class="text-gray-500 text-sm mt-3">
                                     {{ $notification->created_at->diffForHumans() }}
                                 </p>
                             </div>
                             
-                            @if(!$notification->is_read)
-                                <form action="{{ route('notifications.markRead', $notification) }}" method="POST" class="ml-4">
-                                    @csrf
-                                    <button 
-                                        type="submit" 
-                                        class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 whitespace-nowrap"
+                            <div class="ml-4 flex flex-col gap-2">
+                                @if($notification->purchase)
+                                    <a 
+                                        href="{{ route('purchases.show', $notification->purchase) }}"
+                                        class="px-3 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200 whitespace-nowrap text-center"
                                     >
-                                        Mark Read
-                                    </button>
-                                </form>
-                            @else
-                                <span class="ml-4 px-3 py-1 text-sm text-gray-500 bg-gray-100 rounded whitespace-nowrap">
-                                    Read
-                                </span>
-                            @endif
+                                        View Details
+                                    </a>
+
+                                    @if($notification->type === 'purchase_request' && auth()->id() === $notification->purchase->seller_id)
+                                        <a 
+                                            href="{{ route('user.listings.management') }}"
+                                            class="px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200 whitespace-nowrap text-center"
+                                        >
+                                            Listing Mgmt
+                                        </a>
+                                    @endif
+                                @endif
+
+                                @if(!$notification->is_read)
+                                    <form action="{{ route('notifications.markRead', $notification) }}" method="POST">
+                                        @csrf
+                                        <button 
+                                            type="submit" 
+                                            class="px-3 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors duration-200 whitespace-nowrap w-full"
+                                        >
+                                            Mark Read
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded whitespace-nowrap text-center">
+                                        Read
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach

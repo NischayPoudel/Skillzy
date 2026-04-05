@@ -16,6 +16,16 @@ class ReviewController extends Controller
         $this->middleware('auth');
     }
 
+    public function create(Purchase $purchase)
+    {
+        // Only allow buyer to create review if purchase is completed and no review exists yet
+        if (Auth::id() !== $purchase->buyer_id || $purchase->status !== 'completed' || $purchase->review) {
+            abort(403, 'Cannot review this purchase');
+        }
+
+        return view('reviews.create', ['purchase' => $purchase]);
+    }
+
     public function store(ReviewStoreRequest $request): RedirectResponse
     {
         $purchase = Purchase::findOrFail($request->purchase_id);

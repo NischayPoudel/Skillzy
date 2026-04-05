@@ -11,6 +11,18 @@
                 <div style="margin-bottom: 24px; padding: 16px 20px; background: #ecfdf5; border: 2px solid #10b981; border-radius: 0; font-weight: 700; color: #10b981;">✓ {{ $message }}</div>
             @endif
 
+            @if($error = session('error'))
+                <div style="margin-bottom: 24px; padding: 16px 20px; background: #fee2e2; border: 2px solid #ef4444; border-radius: 0; font-weight: 700; color: #dc2626;">✕ {{ $error }}</div>
+            @endif
+
+            @if($errors->any())
+                <div style="margin-bottom: 24px; padding: 16px 20px; background: #fee2e2; border: 2px solid #ef4444; border-radius: 0; font-weight: 700; color: #dc2626;">
+                    @foreach($errors->all() as $error)
+                        ✕ {{ $error }}<br>
+                    @endforeach
+                </div>
+            @endif
+
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                 <!-- Main Content -->
                 <div>
@@ -27,6 +39,7 @@
                                 $statusColors = [
                                     'pending' => ['bg' => '#fbbf24', 'text' => '#000', 'label' => 'PENDING'],
                                     'accepted' => ['bg' => '#60a5fa', 'text' => '#fff', 'label' => 'ACCEPTED'],
+                                    'work_submitted' => ['bg' => '#f59e0b', 'text' => '#fff', 'label' => 'WORK SUBMITTED'],
                                     'completed' => ['bg' => '#10b981', 'text' => '#fff', 'label' => 'COMPLETED'],
                                     'declined' => ['bg' => '#ef4444', 'text' => '#fff', 'label' => 'DECLINED'],
                                 ];
@@ -79,21 +92,36 @@
                                     </form>
                                 </div>
                             @elseif(auth()->id() === $purchase->seller_id && $purchase->status === 'accepted')
-                                <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="width: 100%;" onsubmit="return confirm('Complete this purchase and transfer coins?');">
+                                <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="width: 100%;" onsubmit="return confirm('Submit your work for verification? The buyer will review and verify.');">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="action" value="complete">
-                                    <button type="submit" style="width: 100%; padding: 16px 20px; background: #10b981; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✓ Complete & Transfer Coins</button>
+                                    <button type="submit" style="width: 100%; padding: 16px 20px; background: #f59e0b; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✓ Submit Work for Verification</button>
                                 </form>
+                            @elseif(auth()->id() === $purchase->seller_id && $purchase->status === 'work_submitted')
+                                <div style="padding: 16px; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 0; margin-bottom: 16px;">
+                                    <p style="font-weight: 700; color: #92400e; margin: 0;">⏳ Waiting for Buyer Verification</p>
+                                    <p style="color: #92400e; font-size: 14px; margin: 4px 0 0 0;">Your work has been submitted. Waiting for the buyer to verify it.</p>
+                                </div>
                             @endif
                         @endauth
 
-                        <!-- Buyer Cancel Button -->
+                        <!-- Buyer Actions -->
                         @auth
-                            @if(auth()->id() === $purchase->buyer_id && $purchase->status === 'pending')
-                                <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="width: 100%;" onsubmit="return confirm('Are you sure you want to cancel this purchase request?');">
+                            @if(auth()->id() === $purchase->buyer_id && $purchase->status === 'work_submitted')
+                                <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 0; padding: 16px; margin-bottom: 16px;">
+                                    <p style="font-weight: 700; color: #92400e; margin: 0 0 12px 0;">🔍 Please Review the Submitted Work</p>
+                                    <p style="color: #92400e; font-size: 14px; margin: 0 0 16px 0;">The seller has submitted their work. Review the messages and details below, then verify if the work meets your expectations.</p>
+                                    <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="width: 100%;" onsubmit="return confirm('Verify this work? Coins will be transferred to the seller.');">
+                                        @csrf @method('PATCH')
+                                        <input type="hidden" name="action" value="verify">
+                                        <button type="submit" style="width: 100%; padding: 14px 20px; background: #10b981; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✓ Verify Work Done</button>
+                                    </form>
+                                </div>
+                            @elseif(auth()->id() === $purchase->buyer_id && $purchase->status === 'pending')
+                                <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="width: 100%;" onsubmit="return confirm('Cancel this purchase and refund coins back to your account?');">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="action" value="cancel">
-                                    <button type="submit" style="width: 100%; padding: 16px 20px; background: #ef4444; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✕ Cancel Purchase</button>
+                                    <button type="submit" style="width: 100%; padding: 16px 20px; background: #ef4444; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✕ Cancel & Refund Coins</button>
                                 </form>
                             @endif
                         @endauth

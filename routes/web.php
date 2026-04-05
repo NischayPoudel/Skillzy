@@ -97,6 +97,7 @@ Route::middleware('auth')->get('/messages/{userId}', [MessageController::class, 
 Route::middleware('auth')->post('/messages', [MessageController::class, 'store'])->name('messages.store');
 
 // Reviews
+Route::middleware('auth')->get('/reviews/{purchase}/create', [ReviewController::class, 'create'])->name('reviews.create');
 Route::middleware('auth')->post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
 // Notifications
@@ -107,6 +108,7 @@ Route::middleware('auth')->post('/notifications/{notification}/mark-read', [Noti
 Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', UserDashboardController::class)->name('dashboard');
     Route::resource('listings', ListingController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::get('/listings-management', [ListingController::class, 'management'])->name('listings.management');
 });
 
 // Staff Routes

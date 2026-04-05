@@ -6,6 +6,7 @@ use App\Http\Requests\ListingStoreRequest;
 use App\Http\Requests\ListingUpdateRequest;
 use App\Models\Skill;
 use App\Models\UserSkill;
+use App\Models\Purchase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -133,5 +134,27 @@ class ListingController extends BaseController
         }
 
         return redirect()->route('listings.index', ['search' => $query]);
+    }
+
+    public function management(): View
+    {
+        // Get all user skills for the current seller
+        $userSkills = UserSkill::where('user_id', Auth::id())->pluck('id');
+
+        // Get purchases for this seller's skills
+        $allPurchases = Purchase::whereIn('user_skill_id', $userSkills)
+            ->with('buyer', 'seller', 'userSkill.skill')
+            ->get();
+
+        // Separate by status
+        $pendingRequests = $allPurchases->where('status', 'pending')->sortByDesc('created_at');
+        $acceptedRequests = $allPurchases->where('status', 'accepted')->sortByDesc('updated_at');
+        $completedRequests = $allPurchases->where('status', 'completed')->sortByDesc('updated_at');
+
+        return view('user.listings-management', [
+            'pendingRequests' => $pendingRequests,
+            'acceptedRequests' => $acceptedRequests,
+            'completedRequests' => $completedRequests,
+        ]);
     }
 }
