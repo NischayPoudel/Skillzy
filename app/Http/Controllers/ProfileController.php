@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,11 +29,24 @@ class ProfileController extends Controller
     public function show(Request $request): View
     {
         $user = $request->user();
-        $skills = $user->skills()->get();
+        $userSkills = $user->userSkills()->with('skill')->get();
         
         return view('profile.show', [
             'user' => $user,
-            'skills' => $skills,
+            'userSkills' => $userSkills,
+        ]);
+    }
+
+    /**
+     * Display a public profile view.
+     */
+    public function publicProfile(User $user): View
+    {
+        $userSkills = $user->userSkills()->with('skill')->get();
+        
+        return view('profile.public', [
+            'user' => $user,
+            'userSkills' => $userSkills,
         ]);
     }
 

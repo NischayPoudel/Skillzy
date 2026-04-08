@@ -337,12 +337,12 @@
                         @if(auth()->id() !== $listing->user_id)
                             <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                                 <x-message-modal :listing="$listing" />
-                                <a href="#" style="display: block; padding: 12px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-align: center; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f3f4f6'; this.style.transform='translateY(0)';">
+                                <a href="{{ route('profile.public', $listing->user_id) }}" style="display: block; padding: 12px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-align: center; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f3f4f6'; this.style.transform='translateY(0)';">
                                     View Profile
                                 </a>
                             </div>
                         @else
-                            <a href="#" style="display: block; width: 100%; padding: 12px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-align: center; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 200ms ease; margin-top: 20px;" onmouseover="this.style.background='#e5e7eb'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f3f4f6'; this.style.transform='translateY(0)';">
+                            <a href="{{ route('profile.show') }}" style="display: block; width: 100%; padding: 12px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-align: center; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 200ms ease; margin-top: 20px;" onmouseover="this.style.background='#e5e7eb'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f3f4f6'; this.style.transform='translateY(0)';">
                                 View Your Profile
                             </a>
                         @endif

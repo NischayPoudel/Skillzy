@@ -195,6 +195,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
 
         .skill-card:hover {
@@ -267,22 +268,6 @@
             margin-bottom: 1rem;
         }
 
-        .empty-state-action {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #D02020;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .empty-state-action:hover {
-            background: #a01a1a;
-        }
-
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -337,9 +322,9 @@
         }
     </style>
 
-    <a href="{{ route('dashboard') }}" class="back-link">
+    <a href="javascript:history.back()" class="back-link">
         <i class="fas fa-arrow-left"></i>
-        Back to Dashboard
+        Back
     </a>
 
     <!-- Profile Header -->
@@ -353,12 +338,13 @@
                 @endif
             </div>
 
-            <div class="profile-actions">
-                <a href="{{ route('profile.edit') }}" class="profile-btn primary">
-                    <i class="fas fa-edit"></i>
-                    Edit Profile
-                </a>
-            </div>
+            @auth
+                @if(auth()->id() !== $user->id)
+                    <div class="profile-actions">
+                        <x-message-modal :user="$user" />
+                    </div>
+                @endif
+            @endauth
         </div>
 
         <div class="profile-header-right">
@@ -371,32 +357,21 @@
                     <span class="profile-info-label">Username</span>
                     <span class="profile-info-value">{{ $user->username }}</span>
                 </div>
-                <div class="profile-info-item">
-                    <span class="profile-info-label">Email</span>
-                    <span class="profile-info-value">{{ $user->email }}</span>
-                </div>
-                @if($user->phone_number)
-                <div class="profile-info-item">
-                    <span class="profile-info-label">Phone</span>
-                    <span class="profile-info-value">{{ $user->phone_number }}</span>
+                @if($user->bio)
+                <div class="profile-bio">
+                    <strong>About:</strong> {{ $user->bio }}
                 </div>
                 @endif
             </div>
 
-            @if($user->bio)
-            <div class="profile-bio">
-                <strong>About:</strong> {{ $user->bio }}
-            </div>
-            @endif
-
             <div class="profile-stats">
-                <div class="stat-item">
-                    <div class="stat-number">{{ $user->coins }}</div>
-                    <div class="stat-label">Coins</div>
-                </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ $userSkills->count() }}</div>
                     <div class="stat-label">Skills Listed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ $user->created_at->format('M Y') }}</div>
+                    <div class="stat-label">Member Since</div>
                 </div>
             </div>
         </div>
@@ -406,41 +381,43 @@
     <div class="skills-section">
         <h2 class="section-title">
             <i class="fas fa-star"></i>
-            My Skills
+            Available Skills
         </h2>
 
         @if($userSkills->count() > 0)
             <div class="skills-grid">
                 @foreach($userSkills as $userSkill)
-                <div class="skill-card">
-                    <div class="skill-card-header">
-                        <div class="skill-icon">
-                            @if($userSkill->skill->icon)
-                                @if(str_contains($userSkill->skill->icon, '/') || str_contains($userSkill->skill->icon, '.'))
-                                    <img src="{{ asset('storage/' . $userSkill->skill->icon) }}" alt="{{ $userSkill->skill->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                <a href="{{ route('listings.show', $userSkill->id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="skill-card">
+                        <div class="skill-card-header">
+                            <div class="skill-icon">
+                                @if($userSkill->skill->icon)
+                                    @if(str_contains($userSkill->skill->icon, '/') || str_contains($userSkill->skill->icon, '.'))
+                                        <img src="{{ asset('storage/' . $userSkill->skill->icon) }}" alt="{{ $userSkill->skill->name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                    @else
+                                        <span style="font-size: 3rem;">{{ $userSkill->skill->icon }}</span>
+                                    @endif
                                 @else
-                                    <span style="font-size: 3rem;">{{ $userSkill->skill->icon }}</span>
+                                    <i class="fas fa-star"></i>
                                 @endif
-                            @else
-                                <i class="fas fa-star"></i>
-                            @endif
-                        </div>
-                        <h3 class="skill-name">{{ $userSkill->skill->name }}</h3>
-                    </div>
-                    <div class="skill-card-body">
-                        <p class="skill-description">{{ $userSkill->skill->description ?? 'No description provided.' }}</p>
-                        <div style="display: flex; gap: 1rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
-                            <div style="flex: 1;">
-                                <div style="font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: 600;">Price</div>
-                                <div style="font-size: 1.25rem; font-weight: 700; color: #D02020;">{{ number_format($userSkill->price, 0) }}</div>
                             </div>
-                            <div style="flex: 1;">
-                                <div style="font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: 600;">Level</div>
-                                <div style="font-size: 1rem; font-weight: 600; color: #121212; text-transform: capitalize;">{{ $userSkill->experience_level }}</div>
+                            <h3 class="skill-name">{{ $userSkill->skill->name }}</h3>
+                        </div>
+                        <div class="skill-card-body">
+                            <p class="skill-description">{{ $userSkill->skill->description ?? 'No description provided.' }}</p>
+                            <div style="display: flex; gap: 1rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: 600;">Price</div>
+                                    <div style="font-size: 1.25rem; font-weight: 700; color: #D02020;">{{ number_format($userSkill->price, 0) }}</div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: 600;">Level</div>
+                                    <div style="font-size: 1rem; font-weight: 600; color: #121212; text-transform: capitalize;">{{ $userSkill->experience_level }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 @endforeach
             </div>
         @else
@@ -449,10 +426,6 @@
                 <div class="empty-state-text">
                     No skills listed yet.
                 </div>
-                <a href="{{ route('user.listings.create') }}" class="empty-state-action">
-                    <i class="fas fa-plus"></i>
-                    Create First Listing
-                </a>
             </div>
         @endif
     </div>
