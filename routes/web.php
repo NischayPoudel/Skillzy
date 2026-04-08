@@ -84,7 +84,7 @@ Route::get('/support', [SupportController::class, 'show'])->name('support.show')
 Route::get('/about', [AboutController::class, 'show'])->name('about.show');
 
 // Public Profile Route
-Route::get('/profile/{user}', [ProfileController::class, 'publicProfile'])->name('profile.public');
+Route::get('/users/{userId}/profile', [ProfileController::class, 'publicProfile'])->name('profile.public');
 
 // Purchase Routes
 Route::middleware('auth')->resource('purchases', PurchaseController::class)->only(['index', 'store', 'show', 'update']);
