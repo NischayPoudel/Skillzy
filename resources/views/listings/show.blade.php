@@ -71,13 +71,159 @@
                                 <p style="color: #dc2626; font-size: 14px; margin: 0;">You need {{ number_format($listing->price, 0) }} coins to request this listing. You currently have {{ number_format(auth()->user()->coins, 0) }} coins.</p>
                             </div>
                         @else
-                            <form method="POST" action="{{ route('purchases.store') }}" style="margin-bottom: 32px;">
-                                @csrf
-                                <input type="hidden" name="user_skill_id" value="{{ $listing->id }}">
-                                <button type="submit" style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); color: #1a1a1a; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 300ms ease; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);" onmouseover="this.style.boxShadow='0 8px 20px rgba(255, 193, 7, 0.4)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 4px 12px rgba(255, 193, 7, 0.3)'; this.style.transform='translateY(0)';">
-                                    Request Listing
-                                </button>
-                            </form>
+                            <!-- Request Listing Button -->
+                            <button 
+                                type="button" 
+                                onclick="openPinModal()"
+                                style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); color: #1a1a1a; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 300ms ease; box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3); margin-bottom: 32px;" 
+                                onmouseover="this.style.boxShadow='0 8px 20px rgba(255, 193, 7, 0.4)'; this.style.transform='translateY(-2px)';" 
+                                onmouseout="this.style.boxShadow='0 4px 12px rgba(255, 193, 7, 0.3)'; this.style.transform='translateY(0)';">
+                                Request Listing
+                            </button>
+
+                            <!-- PIN Modal -->
+                            <div id="pinModal">
+                                <div style="background: white; border-radius: 12px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: slideUp 300ms ease;">
+                                    <!-- Modal Header -->
+                                    <div style="margin-bottom: 24px;">
+                                        <h3 style="font-size: 24px; font-weight: 700; color: #1f2937; margin: 0 0 8px 0;">Confirm Purchase</h3>
+                                        <p style="color: #6b7280; font-size: 14px; margin: 0;">Enter your Transaction PIN to proceed</p>
+                                    </div>
+
+                                    <!-- Form -->
+                                    <form method="POST" action="{{ route('purchases.store') }}" id="pinForm" style="margin-bottom: 0;">
+                                        @csrf
+                                        <input type="hidden" name="user_skill_id" value="{{ $listing->id }}">
+                                        
+                                        <!-- PIN Input -->
+                                        <div style="margin-bottom: 24px;">
+                                            <label style="display: block; font-weight: 600; color: #1f2937; margin-bottom: 8px; font-size: 14px;">
+                                                Transaction PIN <span style="color: #ef4444;">*</span>
+                                            </label>
+                                            <input 
+                                                type="password" 
+                                                id="transactionPin"
+                                                name="transaction_pin" 
+                                                placeholder="Enter 4-digit PIN" 
+                                                maxlength="4"
+                                                inputmode="numeric"
+                                                style="width: 100%; padding: 14px 16px; border: 2px solid {{ $errors->has('transaction_pin') ? '#ef4444' : '#e5e7eb' }}; border-radius: 8px; font-size: 18px; font-weight: 600; letter-spacing: 6px; text-align: center; transition: all 200ms ease; box-sizing: border-box;"
+                                                onfocus="this.style.borderColor='#1040C0'; this.style.boxShadow='0 0 0 3px rgba(16, 64, 192, 0.1)';"
+                                                onblur="this.style.borderColor='{{ $errors->has('transaction_pin') ? '#ef4444' : '#e5e7eb' }}'; this.style.boxShadow='none';"
+                                                value="{{ old('transaction_pin') }}"
+                                                required
+                                                autofocus/>
+                                            
+                                            @if($errors->has('transaction_pin'))
+                                                <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 12px; margin-top: 8px;">
+                                                    <p style="color: #dc2626; font-size: 13px; margin: 0; font-weight: 500;">
+                                                        @foreach($errors->get('transaction_pin') as $message)
+                                                            {{ $message }}<br>
+                                                        @endforeach
+                                                    </p>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <!-- Cost Info -->
+                                        <div style="background: #f0f4ff; border-radius: 8px; padding: 12px; margin-bottom: 24px; border-left: 4px solid #1040C0;">
+                                            <p style="font-size: 12px; color: #6b7280; margin: 0 0 4px 0; text-transform: uppercase; font-weight: 600;">Cost</p>
+                                            <p style="font-size: 18px; font-weight: 700; color: #1040C0; margin: 0;">{{ number_format($listing->price, 0) }} coins</p>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div style="display: flex; gap: 12px;">
+                                            <button 
+                                                type="button" 
+                                                onclick="closePinModal()"
+                                                style="flex: 1; padding: 12px 16px; background: #f3f4f6; color: #1f2937; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 200ms ease;"
+                                                onmouseover="this.style.background='#e5e7eb'; this.style.borderColor='#d1d5db';"
+                                                onmouseout="this.style.background='#f3f4f6'; this.style.borderColor='#e5e7eb';">
+                                                Cancel
+                                            </button>
+                                            <button 
+                                                type="submit" 
+                                                style="flex: 1; padding: 12px 16px; background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); color: #1a1a1a; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 200ms ease; box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);"
+                                                onmouseover="this.style.boxShadow='0 4px 12px rgba(255, 193, 7, 0.3)'; this.style.transform='translateY(-1px)';"
+                                                onmouseout="this.style.boxShadow='0 2px 8px rgba(255, 193, 7, 0.2)'; this.style.transform='translateY(0)';">
+                                                Confirm
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Modal Styles & Scripts -->
+                            <style>
+                                #pinModal {
+                                    display: none !important;
+                                    position: fixed;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(0, 0, 0, 0.5);
+                                    z-index: 1000;
+                                    align-items: center;
+                                    justify-content: center;
+                                    opacity: 0;
+                                    transition: opacity 300ms ease;
+                                }
+                                #pinModal.show {
+                                    display: flex !important;
+                                    opacity: 1;
+                                }
+                                #pinModal.show > div {
+                                    animation: slideUp 300ms ease;
+                                }
+                                @keyframes slideUp {
+                                    from {
+                                        transform: translateY(30px);
+                                        opacity: 0;
+                                    }
+                                    to {
+                                        transform: translateY(0);
+                                        opacity: 1;
+                                    }
+                                }
+                            </style>
+
+                            <script>
+                                function openPinModal() {
+                                    const modal = document.getElementById('pinModal');
+                                    modal.classList.add('show');
+                                    document.getElementById('transactionPin').focus();
+                                    document.body.style.overflow = 'hidden';
+                                }
+
+                                function closePinModal() {
+                                    const modal = document.getElementById('pinModal');
+                                    modal.classList.remove('show');
+                                    document.body.style.overflow = 'auto';
+                                    document.getElementById('transactionPin').value = '';
+                                }
+
+                                // Check if there are PIN errors on page load
+                                window.addEventListener('load', function() {
+                                    @if($errors->has('transaction_pin'))
+                                        openPinModal();
+                                    @endif
+                                });
+
+                                // Close modal when clicking outside
+                                document.getElementById('pinModal')?.addEventListener('click', function(e) {
+                                    if (e.target === this) {
+                                        closePinModal();
+                                    }
+                                });
+
+                                // Close modal on Escape key
+                                document.addEventListener('keydown', function(e) {
+                                    if (e.key === 'Escape' && document.getElementById('pinModal')?.classList.contains('show')) {
+                                        closePinModal();
+                                    }
+                                });
+                            </script>
                         @endif
                     @endif
                 @else
