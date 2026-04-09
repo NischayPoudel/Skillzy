@@ -47,11 +47,11 @@
                             <div style="display: flex; gap: 16px;">
                                 <label style="display: flex; align-items: center; cursor: pointer;">
                                     <input type="radio" name="action" value="add" required style="margin-right: 8px; cursor: pointer;" @if(old('action') === 'add' || !old('action')) checked @endif>
-                                    <span style="font-weight: 500;">➕ Add Coins</span>
+                                    <span style="font-weight: 500;">Add Coins</span>
                                 </label>
                                 <label style="display: flex; align-items: center; cursor: pointer;">
                                     <input type="radio" name="action" value="deduct" style="margin-right: 8px; cursor: pointer;" @if(old('action') === 'deduct') checked @endif>
-                                    <span style="font-weight: 500;">➖ Deduct Coins</span>
+                                    <span style="font-weight: 500;">Deduct Coins</span>
                                 </label>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                                                     @if($transaction->type === 'credit') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
                                                     @else bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
                                                     @endif">
-                                                    {{ $transaction->type === 'credit' ? '➕ Credit' : '➖ Debit' }}
+                                                    {{ $transaction->type === 'credit' ? 'Credit' : 'Debit' }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">

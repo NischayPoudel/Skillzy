@@ -40,9 +40,8 @@ class ProfileController extends Controller
     /**
      * Display a public profile view.
      */
-    public function publicProfile($userId)
+    public function publicProfile(User $user): View
     {
-        $user = User::findOrFail($userId);
         $userSkills = $user->userSkills()->with('skill')->get();
         
         return view('profile.public', [

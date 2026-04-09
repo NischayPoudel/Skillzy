@@ -46,7 +46,7 @@
                                                 @if($transaction->type === 'credit') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
                                                 @else bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
                                                 @endif">
-                                                {{ $transaction->type === 'credit' ? '➕ Credit' : '➖ Debit' }}
+                                                {{ $transaction->type === 'credit' ? 'Credit' : 'Debit' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">

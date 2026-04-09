@@ -16,12 +16,14 @@ use App\Http\Controllers\SupportController;
 use App\Http\Controllers\AboutController;
 use App\Models\UserSkill;
 use App\Models\Purchase;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 // Route model bindings
 Route::model('listing', UserSkill::class);
 Route::model('purchase', Purchase::class);
+Route::model('coin', User::class);
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -84,7 +86,7 @@ Route::get('/support', [SupportController::class, 'show'])->name('support.show')
 Route::get('/about', [AboutController::class, 'show'])->name('about.show');
 
 // Public Profile Route
-Route::get('/users/{userId}/profile', [ProfileController::class, 'publicProfile'])->name('profile.public');
+Route::get('/profile/{user}', [ProfileController::class, 'publicProfile'])->name('profile.public');
 
 // Purchase Routes
 Route::middleware('auth')->resource('purchases', PurchaseController::class)->only(['index', 'store', 'show', 'update']);
@@ -127,7 +129,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('skills', \App\Http\Controllers\Admin\SkillController::class);
-    Route::resource('purchases', \App\Http\Controllers\Admin\PurchaseController::class)->only(['index']);
+    Route::resource('purchases', \App\Http\Controllers\Admin\PurchaseController::class)->only(['index', 'edit', 'update']);
     Route::resource('coins', \App\Http\Controllers\Admin\CoinController::class)->only(['index', 'edit', 'update']);
     Route::get('/coins/{user}/transactions', [\App\Http\Controllers\Admin\CoinController::class, 'transactions'])->name('coins.transactions');
 });

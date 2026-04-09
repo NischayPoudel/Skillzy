@@ -73,7 +73,7 @@ class CoinController extends Controller
             'amount' => $amount,
             'reason' => $request->reason,
             'reference_id' => null,
-            'status' => 'completed',
+            'status' => 'success',
         ]);
 
         return redirect()->route('admin.coins.edit', $user)->with('success', 'Coins updated successfully.');

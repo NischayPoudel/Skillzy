@@ -20,7 +20,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('profile.public', ['userId' => $otherUser->id]) }}" style="padding: 8px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb';" onmouseout="this.style.background='#f3f4f6';">
+            <a href="{{ route('profile.edit', $otherUser) }}" style="padding: 8px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb';" onmouseout="this.style.background='#f3f4f6';">
                 View Profile
             </a>
         </div>
