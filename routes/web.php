@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('purchases', \App\Http\Controllers\Admin\PurchaseController::class)->only(['index', 'edit', 'update']);
     Route::resource('coins', \App\Http\Controllers\Admin\CoinController::class)->only(['index', 'edit', 'update']);
     Route::get('/coins/{user}/transactions', [\App\Http\Controllers\Admin\CoinController::class, 'transactions'])->name('coins.transactions');
+    Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->only(['index', 'edit', 'update', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {

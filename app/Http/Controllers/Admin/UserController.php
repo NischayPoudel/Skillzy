@@ -108,6 +108,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        // Prevent deletion of admin users
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.users.index')->with('error', 'Admin users cannot be deleted.');
+        }
+
         if ($user->profile_image) {
             Storage::disk('public')->delete($user->profile_image);
         }
