@@ -46,4 +46,23 @@ class Purchase extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+    /**
+     * Scope to check for active purchases (pending or accepted)
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereIn('status', ['pending', 'accepted']);
+    }
+
+    /**
+     * Check if there's already an active purchase for a buyer-skill combination
+     */
+    public static function hasActivePurchase($buyerId, $userSkillId)
+    {
+        return self::where('buyer_id', $buyerId)
+                   ->where('user_skill_id', $userSkillId)
+                   ->active()
+                   ->exists();
+    }
 }

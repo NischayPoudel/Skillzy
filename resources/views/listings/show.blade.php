@@ -65,7 +65,18 @@
                 <!-- Call to Action -->
                 @auth
                     @if(auth()->id() !== $listing->user_id)
-                        @if(auth()->user()->coins < $listing->price)
+                        @if($hasActivePurchase)
+                            <!-- Already has active request -->
+                            <div style="background: #f3f4f6; border: 2px solid #d1d5db; border-radius: 8px; padding: 16px; margin-bottom: 32px;">
+                                <button 
+                                    type="button" 
+                                    disabled
+                                    style="width: 100%; padding: 16px 24px; background: #d1d5db; color: #6b7280; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: not-allowed; transition: all 300ms ease; margin-bottom: 12px; opacity: 0.7;">
+                                    Request Already Active
+                                </button>
+                                <p style="color: #6b7280; font-size: 13px; margin: 0; font-weight: 600; line-height: 1.5;">✓ You already have an active request for this listing. Please wait until the previous request is completed before making a new one.</p>
+                            </div>
+                        @elseif(auth()->user()->coins < $listing->price)
                             <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 32px;">
                                 <p style="font-weight: 600; color: #dc2626; margin: 0 0 4px 0;">✕ Insufficient Coins</p>
                                 <p style="color: #dc2626; font-size: 14px; margin: 0;">You need {{ number_format($listing->price, 0) }} coins to request this listing. You currently have {{ number_format(auth()->user()->coins, 0) }} coins.</p>

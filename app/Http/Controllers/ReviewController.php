@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReviewStoreRequest;
+use App\Models\Notification;
 use App\Models\Purchase;
 use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
@@ -40,6 +41,15 @@ class ReviewController extends Controller
             'seller_id' => $purchase->seller_id,
             'rating' => $request->rating,
             'comment' => $request->comment,
+        ]);
+
+        // Notify seller about the review
+        Notification::create([
+            'user_id' => $purchase->seller_id,
+            'purchase_id' => $purchase->id,
+            'type' => 'review_received',
+            'title' => 'New Review Received',
+            'message' => $purchase->buyer->name . ' left a ' . $request->rating . '-star review for ' . $purchase->userSkill->skill->name . '.',
         ]);
         
         return redirect()->route('purchases.show', $purchase)->with('success', 'Review posted successfully!');

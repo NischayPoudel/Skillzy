@@ -95,9 +95,16 @@ class ListingController extends BaseController
             ->get()
             ->mapWithKeys(fn($p) => $p->review ? [$p->id => $p->review] : []);
 
+        // Check if current user has an active purchase for this listing
+        $hasActivePurchase = false;
+        if (Auth::check()) {
+            $hasActivePurchase = Purchase::hasActivePurchase(Auth::id(), $listing->id);
+        }
+
         return view('listings.show', [
             'listing' => $listing->load('user', 'skill'),
             'reviews' => $reviews,
+            'hasActivePurchase' => $hasActivePurchase,
         ]);
     }
 

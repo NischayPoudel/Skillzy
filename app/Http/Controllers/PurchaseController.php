@@ -49,6 +49,11 @@ class PurchaseController extends Controller
         $amount = $userSkill->price;
         $buyer = Auth::user();
 
+        // Check if there's already an active (pending or accepted) purchase for this skill
+        if (Purchase::hasActivePurchase($buyer->id, $userSkill->id)) {
+            return redirect()->back()->with('error', 'You already have an active request for this listing. Please wait until the previous request is completed before making a new one.');
+        }
+
         // Check if buyer has sufficient coins
         if ($buyer->coins < $amount) {
             return redirect()->back()->with('error', 'Insufficient coins. You need ' . number_format($amount, 2) . ' coins to request this listing. You currently have ' . number_format($buyer->coins, 2) . ' coins.');

@@ -242,14 +242,41 @@
                 About
             </a>
             <!-- Notification Icon -->
-            <a href="#" 
-               style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; text-decoration: none; transition: all 0.3s ease; position: relative;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #1b1b18;">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    <circle cx="18" cy="8" r="3" fill="#D02020"></circle>
-                </svg>
-            </a>
+            @auth
+            <div style="position: relative; display: inline-block;">
+                <button 
+                    id="notificationBtn"
+                    onclick="toggleNotificationDropdown()"
+                    style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; text-decoration: none; transition: all 0.3s ease; position: relative; background: none; border: none; cursor: pointer; padding: 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #1b1b18;">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span id="notificationBadge" style="position: absolute; top: -2px; right: -2px; background: #D02020; color: white; border-radius: 50%; width: 18px; height: 18px; display: none; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; border: 2px solid white;"></span>
+                </button>
+
+                <!-- Notification Dropdown -->
+                <div id="notificationDropdown" style="display: none; position: absolute; top: 40px; right: -100px; width: 380px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden; border: 1px solid #e5e7eb;">
+                    <!-- Header -->
+                    <div style="background: linear-gradient(135deg, #1040C0 0%, #0D32A4 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 700;">Notifications</h3>
+                        <a href="{{ route('notifications.index') }}" style="color: white; font-size: 12px; font-weight: 600; text-decoration: none; opacity: 0.9; transition: opacity 0.2s;">View All →</a>
+                    </div>
+
+                    <!-- Notifications List -->
+                    <div id="notificationsList" style="max-height: 400px; overflow-y: auto;">
+                        <div style="padding: 20px; text-align: center; color: #6b7280;">
+                            <p style="margin: 0; font-size: 14px; font-weight: 600;">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="border-top: 1px solid #e5e7eb; padding: 12px; text-align: center;">
+                        <a href="{{ route('notifications.index') }}" style="color: #1040C0; font-size: 13px; font-weight: 600; text-decoration: none;">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+            @endauth
 
             <!-- Message Icon -->
             @auth
@@ -405,6 +432,96 @@
                         profileMenu.classList.remove('active');
                     });
                 });
+            }
+
+            // Notification Dropdown
+            loadNotifications();
+            setInterval(loadNotifications, 30000); // Refresh every 30 seconds
+        });
+
+        function toggleNotificationDropdown() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+                loadNotifications();
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function loadNotifications() {
+            if (!@auth true @else false @endauth) return;
+            
+            fetch('{{ route("notifications.recent") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationsList = document.getElementById('notificationsList');
+                    const badge = document.getElementById('notificationBadge');
+                    
+                    // Update badge
+                    if (data.unreadCount > 0) {
+                        badge.style.display = 'flex';
+                        badge.textContent = data.unreadCount > 9 ? '9+' : data.unreadCount;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+                    // Render notifications
+                    if (data.notifications.length === 0) {
+                        notificationsList.innerHTML = '<div style="padding: 32px 20px; text-align: center; color: #9ca3af;"><p style="margin: 0; font-size: 14px;">No notifications</p></div>';
+                        return;
+                    }
+
+                    let html = '';
+                    data.notifications.forEach(notification => {
+                        const link = notification.purchase ? `/purchases/${notification.purchase.id}` : '{{ route("notifications.index") }}';
+                        const bgColor = notification.is_read ? '#f9fafb' : '#f0f4ff';
+                        
+                        html += `
+                            <a href="${link}" onclick="markNotificationAsRead(event, this)" style="display: block; padding: 16px; border-bottom: 1px solid #e5e7eb; background: ${bgColor}; text-decoration: none; color: #1f2937; transition: background 0.2s; cursor: pointer;">
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1f2937;">${notification.title}</p>
+                                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${notification.message}</p>
+                                        <p style="margin: 8px 0 0 0; font-size: 11px; color: #9ca3af;">${formatTimeAgo(notification.created_at)}</p>
+                                    </div>
+                                    ${!notification.is_read ? '<span style="width: 8px; height: 8px; background: #1040C0; border-radius: 50%; flex-shrink: 0; margin-top: 4px;"></span>' : ''}
+                                </div>
+                            </a>
+                        `;
+                    });
+
+                    notificationsList.innerHTML = html;
+                })
+                .catch(error => console.error('Error loading notifications:', error));
+        }
+
+        function formatTimeAgo(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            if (seconds < 604800) return Math.floor(seconds / 86400) + 'd ago';
+            return date.toLocaleDateString();
+        }
+
+        function markNotificationAsRead(e, element) {
+            // Prevent default if needed
+            // You can add logic here to mark as read if needed
+        }
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            if (notificationDropdown && notificationBtn) {
+                if (!e.target.closest('#notificationBtn') && !e.target.closest('#notificationDropdown')) {
+                    notificationDropdown.style.display = 'none';
+                }
             }
         });
     </script>

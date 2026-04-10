@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -22,6 +23,27 @@ class NotificationController extends Controller
             ->paginate(20);
         
         return view('notifications.index', ['notifications' => $notifications]);
+    }
+
+    /**
+     * Get recent notifications as JSON for dropdown
+     */
+    public function getRecent(): JsonResponse
+    {
+        $notifications = Notification::where('user_id', Auth::id())
+            ->latest()
+            ->with('purchase.userSkill.skill', 'purchase.buyer', 'purchase.seller')
+            ->limit(10)
+            ->get();
+
+        $unreadCount = Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unreadCount' => $unreadCount,
+        ]);
     }
 
     public function markRead(Notification $notification): RedirectResponse

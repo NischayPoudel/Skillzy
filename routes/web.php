@@ -107,6 +107,7 @@ Route::middleware('auth')->post('/reviews', [ReviewController::class, 'store'])-
 
 // Notifications
 Route::middleware('auth')->get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::middleware('auth')->get('/notifications/recent', [NotificationController::class, 'getRecent'])->name('notifications.recent');
 Route::middleware('auth')->post('/notifications/{notification}/mark-read', [NotificationController::class, 'markRead'])->name('notifications.markRead');
 
 // User Routes
