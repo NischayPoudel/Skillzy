@@ -10,64 +10,76 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if($message = session('success'))
-                <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">{{ $message }}</div>
+                <div class="mb-6 p-4 bg-green-100 text-green-700 rounded-lg font-semibold">✓ {{ $message }}</div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-900">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Skill') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Buyer') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Seller') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Amount') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Status') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ __('Action') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse($purchases as $purchase)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                    {{ $purchase->userSkill->skill->name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                    {{ $purchase->buyer->name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                    {{ $purchase->seller->name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ number_format($purchase->amount, 2) }} coins
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 rounded-full text-sm font-medium 
-                                        @if($purchase->status === 'pending') bg-yellow-100 text-yellow-800
-                                        @elseif($purchase->status === 'accepted') bg-blue-100 text-blue-800
-                                        @elseif($purchase->status === 'completed') bg-green-100 text-green-800
-                                        @else bg-red-100 text-red-800
-                                        @endif">
-                                        {{ ucfirst($purchase->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('purchases.show', $purchase) }}" class="text-blue-600 hover:text-blue-900">{{ __('View') }}</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{{ __('No purchases found') }}</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <!-- Purchases Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+                @forelse($purchases as $purchase)
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: all 200ms ease-out; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"
+                         onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,0.15)'; this.style.transform='translateY(-2px)';"
+                         onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
+                        
+                        <!-- Image Section -->
+                        <div style="flex: 1; overflow: hidden; background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 200px;">
+                            @if($purchase->userSkill->skill->icon)
+                                @if(str_contains($purchase->userSkill->skill->icon, '/') || str_contains($purchase->userSkill->skill->icon, '.'))
+                                    <img src="{{ asset('storage/' . $purchase->userSkill->skill->icon) }}" alt="{{ $purchase->userSkill->skill->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <div style="font-size: 48px;">{{ $purchase->userSkill->skill->icon }}</div>
+                                @endif
+                            @else
+                                <div style="font-size: 32px; color: #d1d5db; font-weight: 600;">No Image</div>
+                            @endif
+                        </div>
+                        
+                        <!-- Card Content -->
+                        <div style="padding: 16px; background: white; border-top: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 12px; flex: 1;">
+                            <!-- Skill Name -->
+                            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1040C0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $purchase->userSkill->skill->name }}</h3>
+                            
+                            <!-- Buyer Info -->
+                            <div>
+                                <p style="margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px;">Buyer</p>
+                                <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->buyer->name }}</p>
+                            </div>
 
-                <div class="p-4">
-                    {{ $purchases->links() }}
-                </div>
+                            <!-- Seller Info -->
+                            <div>
+                                <p style="margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px;">Seller</p>
+                                <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->seller->name }}</p>
+                            </div>
+
+                            <!-- Amount & Status -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                <span style="font-size: 14px; font-weight: 900; color: #1040C0;">₹{{ number_format($purchase->amount, 0) }}</span>
+                                <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+                                    @if($purchase->status === 'pending') background: #fef3c7; color: #92400e;
+                                    @elseif($purchase->status === 'accepted') background: #dbeafe; color: #1e40af;
+                                    @elseif($purchase->status === 'completed') background: #dcfce7; color: #166534;
+                                    @else background: #fee2e2; color: #991b1b;
+                                    @endif
+                                    text-transform: uppercase;">{{ ucfirst($purchase->status) }}</span>
+                            </div>
+
+                            <!-- View Button -->
+                            <a href="{{ route('purchases.show', $purchase) }}" style="display: block; padding: 12px; background: #1040C0; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; text-align: center; transition: all 200ms ease-out; margin-top: 8px;" onmouseover="this.style.background='#0D32A4'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1040C0'; this.style.transform='translateY(0)';">View Details</a>
+                        </div>
+                    </div>
+                @empty
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <p style="font-size: 18px; font-weight: 700; color: #6b7280; margin: 0 0 8px 0;">No purchases found</p>
+                        <p style="font-size: 14px; color: #9ca3af; margin: 0;">Start purchasing skills from our community of experts</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Pagination -->
+            <div style="margin-top: 32px;">
+                {{ $purchases->links() }}
             </div>
         </div>
     </div>
