@@ -143,4 +143,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Public Pages
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+Route::get('/faq', function () {
+    return view('faq');
+})->name('faq');
+
 require __DIR__.'/auth.php';

@@ -795,9 +795,9 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-bauhaus-black text-white section-divider mt-auto" style="background-color: #f5f5f5; border-top: 4px solid #121212;">
-        <div class="section-container" style="max-width: 1200px; margin: 0 auto; width: 100%; padding: 3rem 1.5rem;">
-            <div style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 6rem; align-items: start; margin-bottom: 2rem;">
+    <footer class="bg-bauhaus-black text-white section-divider mt-auto" style="background-color: #f5f5f5; border-top: 4px solid #121212; padding: 1rem;">
+        <div class="section-container" style="max-width: 1200px; margin: 0 auto; width: 100%; padding: 1rem;">
+            <div style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 6rem; align-items: start; margin-bottom: 0.5rem;">
                 
                 <!-- Geometric Shapes -->
                 <div style="display: flex; gap: 1.5rem; align-items: center;">
@@ -819,12 +819,16 @@
                 <!-- About Column -->
                 <div>
                     <h4 style="color: #121212; font-weight: 700; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1.5rem;">About</h4>
-                    <p style="color: #333; font-size: 0.95rem; line-height: 1.6; margin: 0;">Skillzy is a peer-to-peer skill exchange platform using Skillzy Coins as currency.</p>
+                    <div>
+                        <a href="/about" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">About Us</a>
+                        <a href="/contact" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">Contact Us</a>
+                        <a href="/faq" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">FAQ</a>
+                    </div>
                 </div>
             </div>
 
             <!-- Bottom -->
-            <div style="border-top: 4px solid #121212; padding-top: 1.5rem; text-align: center;">
+            <div style="padding-top: 0.5rem; text-align: center;">
                 <p style="color: #121212; font-size: 0.95rem; font-weight: 600; margin: 0;">&copy; 2026 Skillzy. All rights reserved.</p>
             </div>
         </div>
