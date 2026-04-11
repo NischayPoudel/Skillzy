@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Models\PendingRegistration;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -30,7 +33,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users'), Rule::unique('pending_registrations')],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'transaction_pin' => ['required', 'string', 'size:4', 'regex:/^[0-9]+$/'],
@@ -44,17 +47,30 @@ class RegisteredUserController extends Controller
             return redirect()->back()->withErrors(['name' => 'This username already exists. Please choose a different name.'])->withInput();
         }
 
-        $user = User::create([
+        // Create pending registration (user not saved yet)
+        $verificationToken = Str::random(60);
+        
+        $pendingRegistration = PendingRegistration::create([
             'name' => $request->name,
-            'username' => $username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone_number' => $request->phone_number,
             'transaction_pin' => Hash::make($request->transaction_pin),
+            'verification_token' => $verificationToken,
+            'token_expires_at' => now()->addHours(24),
         ]);
 
-        event(new Registered($user));
+        // Send verification email
+        $verificationUrl = route('registration.verify', ['token' => $verificationToken], absolute: true);
+        
+        Mail::send('auth.emails.verify-registration', [
+            'name' => $pendingRegistration->name,
+            'verificationUrl' => $verificationUrl,
+        ], function ($message) use ($pendingRegistration) {
+            $message->to($pendingRegistration->email)
+                    ->subject('Verify Your Email Address - Skillzy Registration');
+        });
 
-        return redirect(route('login', absolute: false))->with('status', 'Registration successful! Please log in with your credentials.');
+        return redirect(route('login', absolute: false))->with('status', 'Registration successful! Please check your email to verify your account. You have 24 hours to verify.');
     }
 }
