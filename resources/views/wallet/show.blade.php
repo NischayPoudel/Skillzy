@@ -135,6 +135,108 @@
             </form>
         </x-card-bauhaus>
 
+        <!-- Redeem Coins Section -->
+        <x-card-bauhaus>
+            <h3 class="text-3xl font-black uppercase tracking-tight mb-6 pb-4 border-b-4 border-bauhaus-black section-heading">Redeem Coins</h3>
+            
+            <p style="font-size: 0.95rem; color: #666; margin-bottom: 1.5rem;">
+                Submit your bank account or payment proof to redeem your coins. Our admin team will review your request and process it.
+            </p>
+
+            <!-- Redeem Form Modal Button -->
+            <button 
+                id="redeem-button"
+                type="button"
+                class="btn btn-secondary"
+                onclick="document.getElementById('redeem-modal').style.display='flex'"
+                style="background-color: #1040C0; color: white; border: 4px solid #121212; padding: 1rem 2rem; text-transform: uppercase; font-weight: 900; cursor: pointer; transition: all 0.2s ease; width: 100%;"
+                onmouseover="this.style.transform='translate(-3px, -3px)'; this.style.boxShadow='6px 6px 0px rgba(16, 64, 192, 0.2)';"
+                onmouseout="this.style.transform='translate(0, 0)'; this.style.boxShadow='none';"
+            >
+                Submit Redeem Request
+            </button>
+
+            <!-- Redeem Modal -->
+            <div id="redeem-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: center; justify-content: center;">
+                <div style="background: white; border: 4px solid #121212; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); border-radius: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 1.5rem; font-weight: 900; color: #121212; text-transform: uppercase;">Redeem Coins</h4>
+                        <button 
+                            type="button" 
+                            onclick="document.getElementById('redeem-modal').style.display='none'"
+                            style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #121212; padding: 0; margin: 0;">
+                            ×
+                        </button>
+                    </div>
+
+                    <form action="{{ route('wallet.redeem') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                                Amount (Coins)
+                            </label>
+                            <input 
+                                type="number" 
+                                name="coins_amount" 
+                                min="1" 
+                                max="{{ auth()->user()->coins }}"
+                                step="1" 
+                                placeholder="Enter coins to redeem"
+                                style="width: 100%; border: 3px solid #121212; padding: 0.75rem 1rem; font-size: 1rem; font-family: 'Outfit', sans-serif; font-weight: 500;"
+                                required 
+                            />
+                            <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Available: {{ auth()->user()->coins }} coins</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                                Proof Image (Scanner/Bank Account)
+                            </label>
+                            <input 
+                                type="file" 
+                                name="proof_image" 
+                                accept="image/*" 
+                                style="width: 100%; border: 3px solid #121212; padding: 0.75rem 1rem; font-size: 1rem; font-family: 'Outfit', sans-serif; font-weight: 500; display: block;"
+                                required 
+                            />
+                            <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">JPG, PNG, or GIF. Max 5MB.</p>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button 
+                                type="button"
+                                onclick="document.getElementById('redeem-modal').style.display='none'"
+                                style="flex: 1; background-color: #F0F0F0; color: #121212; border: 3px solid #121212; font-weight: 900; padding: 0.75rem 1.5rem; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s ease; font-family: 'Outfit', sans-serif;"
+                                onmouseover="this.style.backgroundColor='#E0E0E0';"
+                                onmouseout="this.style.backgroundColor='#F0F0F0';"
+                            >
+                                Cancel
+                            </button>
+
+                            <button 
+                                type="submit"
+                                style="flex: 1; background-color: #1040C0; color: white; border: 4px solid #121212; font-weight: 900; padding: 0.75rem 1.5rem; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s ease; font-family: 'Outfit', sans-serif;"
+                                onmouseover="this.style.transform='translate(-2px, -2px)'; this.style.boxShadow='4px 4px 0px rgba(16, 64, 192, 0.2)';"
+                                onmouseout="this.style.transform='translate(0, 0)'; this.style.boxShadow='none';"
+                            >
+                                Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Close modal when clicking outside -->
+            <script>
+                document.getElementById('redeem-modal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            </script>
+        </x-card-bauhaus>
+
         <!-- Transaction History -->
         <x-card-bauhaus>
             <h3 class="text-3xl font-black uppercase tracking-tight mb-6 pb-4 border-b-4 border-bauhaus-black section-heading">Transaction History</h3>

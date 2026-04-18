@@ -85,7 +85,15 @@ Route::get('/search', [ListingController::class, 'search'])->name('listings.sear
 Route::get('/support', [SupportController::class, 'show'])->name('support.show');
 Route::get('/about', [AboutController::class, 'show'])->name('about.show');
 
-// Public Profile Route
+// Authenticated Profile Routes (must come before public profile route)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Public Profile Route (must come after authenticated routes)
 Route::get('/profile/{user}', [ProfileController::class, 'publicProfile'])->name('profile.public');
 
 // Purchase Routes
@@ -95,6 +103,8 @@ Route::middleware('auth')->resource('purchases', PurchaseController::class)->onl
 Route::middleware('auth')->get('/wallet', [WalletController::class, 'show'])->name('wallet.show');
 Route::middleware('auth')->post('/wallet/topup', [WalletController::class, 'topup'])->name('wallet.topup');
 Route::middleware('auth')->get('/wallet/callback', [WalletController::class, 'callback'])->name('wallet.callback');
+Route::middleware('auth')->post('/wallet/redeem', [WalletController::class, 'storeRedeem'])->name('wallet.redeem');
+Route::middleware('auth')->get('/wallet/redeem-history', [WalletController::class, 'redeemHistory'])->name('wallet.redeem-history');
 
 // Messages
 Route::middleware('auth')->get('/messages', [MessageController::class, 'index'])->name('messages.index');
@@ -134,13 +144,10 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('coins', \App\Http\Controllers\Admin\CoinController::class)->only(['index', 'edit', 'update']);
     Route::get('/coins/{user}/transactions', [\App\Http\Controllers\Admin\CoinController::class, 'transactions'])->name('coins.transactions');
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->only(['index', 'edit', 'update', 'destroy']);
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource('redeem', \App\Http\Controllers\Admin\RedeemController::class)->only(['index', 'show']);
+    Route::post('/redeem/{redeem}/approve', [\App\Http\Controllers\Admin\RedeemController::class, 'approve'])->name('redeem.approve');
+    Route::post('/redeem/{redeem}/reject', [\App\Http\Controllers\Admin\RedeemController::class, 'reject'])->name('redeem.reject');
+    Route::delete('/redeem/{redeem}', [\App\Http\Controllers\Admin\RedeemController::class, 'destroy'])->name('redeem.destroy');
 });
 
 // Public Pages

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -65,6 +66,14 @@ class ProfileController extends Controller
             }
             // Store new image
             $validated['profile_image'] = $request->file('profile_image')->store('profile-images', 'public');
+        }
+
+        // Handle transaction_pin - hash if provided
+        if (!empty($validated['transaction_pin'])) {
+            $validated['transaction_pin'] = Hash::make($validated['transaction_pin']);
+        } else {
+            // Remove transaction_pin from update if empty
+            unset($validated['transaction_pin']);
         }
 
         $request->user()->fill($validated);

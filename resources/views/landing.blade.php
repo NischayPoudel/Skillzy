@@ -638,9 +638,9 @@
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="shape shape-large shape-red">01</div>
-                <div class="shape shape-medium shape-blue" style="border-radius: 50%;">02</div>
-                <div class="shape shape-large shape-yellow">03</div>
+                <div class="shape shape-large shape-red" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+                <div class="shape shape-medium shape-blue" style="border-radius: 50%;"></div>
+                <div class="shape shape-large shape-yellow"></div>
             </div>
         </div>
     </section>

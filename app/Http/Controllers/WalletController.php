@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WalletTopupRequest;
 use App\Models\CoinTransaction;
 use App\Models\Notification;
+use App\Models\RedeemRequest;
 use App\Models\User;
 use App\Services\KhaltiService;
 use Illuminate\View\View;
@@ -14,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class WalletController extends Controller
 {
@@ -81,7 +83,7 @@ class WalletController extends Controller
                 'customer_info' => [
                     'name' => $user->name,
                     'email' => $user->email,
-                    'phone' => $user->phone ?? '',
+                    'phone' => $user->phone_number ?? '',
                 ],
             ];
 
@@ -257,4 +259,84 @@ class WalletController extends Controller
             ]);
         }
     }
+
+    /**
+     * Store redeem request
+     */
+    public function storeRedeem(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $validated = $request->validate([
+            'coins_amount' => 'required|integer|min:1|max:' . (int)$user->coins,
+            'proof_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
+        ]);
+
+        try {
+            // Use transaction to ensure atomicity
+            DB::transaction(function () use ($user, $validated, $request) {
+                // Store the proof image
+                $imagePath = $request->file('proof_image')->store('redeem-proofs', 'public');
+
+                // Create redeem request
+                $redeemRequest = RedeemRequest::create([
+                    'user_id' => $user->id,
+                    'coins_amount' => $validated['coins_amount'],
+                    'proof_image' => $imagePath,
+                    'status' => 'pending',
+                ]);
+
+                // Deduct coins immediately from user balance
+                $user->decrement('coins', $validated['coins_amount']);
+
+                // Create transaction record for the deduction
+                CoinTransaction::create([
+                    'user_id' => $user->id,
+                    'type' => 'debit',
+                    'amount' => $validated['coins_amount'],
+                    'reason' => 'Coin Redemption - Request #' . $redeemRequest->id . ' (Pending)',
+                    'reference_id' => 'REDEEM_' . $redeemRequest->id,
+                    'status' => 'pending',
+                ]);
+            });
+
+            return redirect()->route('wallet.show')->with('success', "Your redeem request has been submitted! {$validated['coins_amount']} coins have been deducted from your balance. Admins will review it shortly.");
+        } catch (\Throwable $e) {
+            Log::error('Error creating redeem request', [
+                'message' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->route('wallet.show')->withErrors([
+                'redeem' => 'Failed to submit redeem request. Please try again.',
+            ]);
+        }
+    }
+
+    /**
+     * Get user's redeem requests
+     */
+    public function redeemHistory(): View|RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $redeemRequests = RedeemRequest::where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
+
+        return view('wallet.redeem-history', [
+            'redeemRequests' => $redeemRequests,
+        ]);
+    }
 }
+

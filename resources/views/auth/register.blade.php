@@ -39,7 +39,7 @@
 
         <div class="field">
             <label for="phone_number">{{ __('Phone Number') }} <span class="text-gray-500">(Optional - for support)</span></label>
-            <input id="phone_number" class="input" type="tel" name="phone_number" value="{{ old('phone_number') }}" placeholder="+1 234 567 8900" autocomplete="tel" />
+            <input id="phone_number" class="input" type="tel" name="phone_number" value="{{ old('phone_number') }}" placeholder="+977 9841234567" autocomplete="tel" />
             <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
         </div>
 
