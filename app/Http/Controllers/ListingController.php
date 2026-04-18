@@ -30,24 +30,45 @@ class ListingController extends BaseController
         } else {
             // Show only active listings for public browse
             $query->where('status', 'active');
+            // Exclude user's own skills from browse
+            if (Auth::check()) {
+                $query->where('user_id', '!=', Auth::id());
+            }
         }
 
         if ($request->has('search')) {
-            $query->whereHas('skill', function ($q) {
-                $q->where('name', 'like', '%' . request('search') . '%');
+            $searchTerm = '%' . request('search') . '%';
+            $searchBy = request('search_by', 'both');
+            
+            $query->where(function ($q) use ($searchTerm, $searchBy) {
+                if ($searchBy === 'skill' || $searchBy === 'both') {
+                    $q->whereHas('skill', function ($sq) use ($searchTerm) {
+                        $sq->where('name', 'like', $searchTerm);
+                    });
+                }
+                
+                if ($searchBy === 'user') {
+                    $q->whereHas('user', function ($uq) use ($searchTerm) {
+                        $uq->where('name', 'like', $searchTerm);
+                    });
+                } else if ($searchBy === 'both') {
+                    $q->orWhereHas('user', function ($uq) use ($searchTerm) {
+                        $uq->where('name', 'like', $searchTerm);
+                    });
+                }
             });
         }
 
-        if ($request->has('level')) {
+        if ($request->has('level') && !empty(request('level'))) {
             $query->where('experience_level', request('level'));
         }
 
-        if ($request->has('min_price')) {
-            $query->where('price', '>=', request('min_price'));
+        if ($request->has('min_price') && !empty(request('min_price'))) {
+            $query->where('price', '>=', (float)request('min_price'));
         }
 
-        if ($request->has('max_price')) {
-            $query->where('price', '<=', request('max_price'));
+        if ($request->has('max_price') && !empty(request('max_price'))) {
+            $query->where('price', '<=', (float)request('max_price'));
         }
 
         $sort = $request->get('sort', 'latest');
@@ -59,12 +80,25 @@ class ListingController extends BaseController
             $query->latest();
         }
 
+        // Get unique sellers from the filtered results before paginating
+        $sellers = $query->clone()
+            ->select('user_id')
+            ->distinct()
+            ->limit(8)
+            ->get()
+            ->map(function($item) {
+                return \App\Models\User::find($item->user_id);
+            })
+            ->filter()
+            ->values();
+
         $listings = $query->paginate(12);
         $skills = Skill::orderBy('name')->get();
 
         return view('listings.index', [
             'listings' => $listings,
             'skills' => $skills,
+            'sellers' => $sellers,
         ]);
     }
 
