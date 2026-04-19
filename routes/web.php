@@ -32,6 +32,14 @@ Route::get('/', function () {
     return view('landing');
 })->name('landing');
 
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');
+
+Route::get('/terms-and-conditions', function () {
+    return view('terms-and-conditions');
+})->name('terms-and-conditions');
+
 Route::get('/dashboard', function () {
     $user = Auth::user();
     if ($user) {

@@ -73,7 +73,7 @@
                     <div>
                         <p class="uppercase-label text-sm mb-2">Total Revenue</p>
                         <p class="text-5xl sm:text-7xl font-black tracking-tighter">
-                            ${{ number_format($totalRevenue, 0) }}
+                            {{ number_format($totalRevenue, 0) }}
                         </p>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
             <div class="section-container">
                 <h2 class="text-4xl font-black uppercase tracking-tight mb-12">Administration Panel</h2>
                 
-                <div class="grid-1-2-2-2 gap-8" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+                <div class="grid-1-2-2-2 gap-8" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
                     <!-- Manage Users -->
                     <div style="background: linear-gradient(135deg, #1040C0 0%, #0D32A4 100%); border: 3px solid #121212; padding: 32px 24px; border-radius: 12px; color: white; display: flex; flex-direction: column; transition: all 200ms ease-out; cursor: pointer; box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);" 
                          onmouseover="this.style.transform='translate(-4px, -4px)'; this.style.boxShadow='12px 12px 0 rgba(0, 0, 0, 0.2)';"
@@ -141,10 +141,7 @@
                             Access
                         </a>
                     </div>
-                </div>
 
-                <!-- Second Row -->
-                <div class="grid-1-2-2-2 gap-8" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 24px;">
                     <!-- Manage Redeem Requests -->
                     <div style="background: linear-gradient(135deg, #6D28D9 0%, #5B21B6 100%); border: 3px solid #121212; padding: 32px 24px; border-radius: 12px; color: white; display: flex; flex-direction: column; transition: all 200ms ease-out; cursor: pointer; box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);" 
                          onmouseover="this.style.transform='translate(-4px, -4px)'; this.style.boxShadow='12px 12px 0 rgba(0, 0, 0, 0.2)';"
@@ -155,6 +152,20 @@
                         <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Redeem</h3>
                         <p style="font-size: 13px; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; opacity: 0.95;">Approve coin redemption requests</p>
                         <a href="{{ route('admin.redeem.index') }}" style="background: white; color: #6D28D9; border: 2px solid white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; text-align: center; transition: all 200ms ease-out; display: inline-block; cursor: pointer;">
+                            Access
+                        </a>
+                    </div>
+
+                    <!-- Manage Reviews & Ratings -->
+                    <div style="background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); border: 3px solid #121212; padding: 32px 24px; border-radius: 12px; color: white; display: flex; flex-direction: column; transition: all 200ms ease-out; cursor: pointer; box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);" 
+                         onmouseover="this.style.transform='translate(-4px, -4px)'; this.style.boxShadow='12px 12px 0 rgba(0, 0, 0, 0.2)';"
+                         onmouseout="this.style.transform='translate(0, 0)'; this.style.boxShadow='8px 8px 0 rgba(0, 0, 0, 0.15)';">
+                        <div style="font-size: 56px; margin-bottom: 16px; background: white; color: #EC4899; width: 70px; height: 70px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid #121212;">
+                            R
+                        </div>
+                        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Ratings</h3>
+                        <p style="font-size: 13px; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; opacity: 0.95;">Manage reviews and rating system</p>
+                        <a href="{{ route('admin.reviews.index') }}" style="background: white; color: #EC4899; border: 2px solid white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; text-align: center; transition: all 200ms ease-out; display: inline-block; cursor: pointer;">
                             Access
                         </a>
                     </div>

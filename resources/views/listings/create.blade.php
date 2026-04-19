@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="flex gap-4">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">{{ __('Create') }}</button>
+                        <button type="submit" class="px-4 py-2 bg-yellow-400 text-black font-bold rounded-lg hover:bg-yellow-500">{{ __('Create') }}</button>
                         <a href="{{ route('user.listings.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">{{ __('Cancel') }}</a>
                     </div>
                 </form>

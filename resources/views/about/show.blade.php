@@ -323,19 +323,16 @@
             <h2 style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3rem; text-align: center;">We're Here to Help</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                 <div class="support-card">
-                    <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">❓</div>
                     <h3 style="font-size: 1.25rem; font-weight: 900; text-transform: uppercase; color: #121212; margin-bottom: 1rem; letter-spacing: 0.5px;">FAQs</h3>
                     <p style="color: #666; line-height: 1.7; margin-bottom: 1.5rem;">Find quick answers to common questions about using Skillzy, managing your profile, and completing transactions.</p>
-                    <a href="{{ route('support.show') }}" style="display: inline-block; padding: 0.75rem 1.5rem; background: #1040C0; color: white; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border: 2px solid #1040C0; transition: all 0.3s ease; letter-spacing: 0.5px;" onmouseover="this.style.background='#0D32A4';" onmouseout="this.style.background='#1040C0';">Browse FAQs</a>
+                    <a href="{{ route('faq') }}" style="display: inline-block; padding: 0.75rem 1.5rem; background: #1040C0; color: white; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border: 2px solid #1040C0; transition: all 0.3s ease; letter-spacing: 0.5px;" onmouseover="this.style.background='#0D32A4';" onmouseout="this.style.background='#1040C0';">Browse FAQs</a>
                 </div>
                 <div class="support-card">
-                    <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">📧</div>
                     <h3 style="font-size: 1.25rem; font-weight: 900; text-transform: uppercase; color: #121212; margin-bottom: 1rem; letter-spacing: 0.5px;">Email Support</h3>
                     <p style="color: #666; line-height: 1.7; margin-bottom: 1.5rem;">Reach out to our dedicated support team for detailed assistance. We typically respond within 24 hours.</p>
                     <a href="mailto:support@skillzy.com" style="display: inline-block; padding: 0.75rem 1.5rem; background: #D02020; color: white; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border: 2px solid #D02020; transition: all 0.3s ease; letter-spacing: 0.5px;" onmouseover="this.style.background='#B01818';" onmouseout="this.style.background='#D02020';">Contact Us</a>
                 </div>
                 <div class="support-card">
-                    <div style="font-size: 3.5rem; margin-bottom: 1.5rem;">💬</div>
                     <h3 style="font-size: 1.25rem; font-weight: 900; text-transform: uppercase; color: #121212; margin-bottom: 1rem; letter-spacing: 0.5px;">Live Chat</h3>
                     <p style="color: #666; line-height: 1.7; margin-bottom: 1.5rem;">Chat with our support specialists for real-time assistance. Available during business hours for immediate help.</p>
                     <a href="#" style="display: inline-block; padding: 0.75rem 1.5rem; background: #121212; color: white; text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; border: 2px solid #121212; transition: all 0.3s ease; letter-spacing: 0.5px;" onmouseover="this.style.background='#333';" onmouseout="this.style.background='#121212';">Start Chat</a>

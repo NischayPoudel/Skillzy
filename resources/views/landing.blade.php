@@ -633,7 +633,7 @@
                 <h1>Share Your <span class="highlight">Skills</span>, Earn <span class="highlight">Coins</span></h1>
                 <p>Connect with a community of learners and experts. Exchange skills peer-to-peer using Skillzy Coins as currency. No money needed—just your expertise.</p>
                 <div class="hero-cta">
-                    <a href="{{ route('register') }}" class="btn btn-primary">Get Started Free</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary">Sign In</a>
                     <a href="#features" class="btn btn-secondary">Learn More</a>
                 </div>
             </div>
@@ -822,6 +822,8 @@
                     <div>
                         <a href="/about" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">About Us</a>
                         <a href="/contact" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">Contact Us</a>
+                        <a href="{{ route('privacy-policy') }}" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">Privacy Policy</a>
+                        <a href="{{ route('terms-and-conditions') }}" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.8rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">Terms & Conditions</a>
                         <a href="/faq" style="display: block; color: #121212; text-decoration: none; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem;" onmouseover="this.style.color='#D02020';" onmouseout="this.style.color='#121212';">FAQ</a>
                     </div>
                 </div>
