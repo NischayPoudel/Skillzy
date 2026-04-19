@@ -87,7 +87,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('purchases.update', $purchase) }}" style="flex: 1;">
                                         @csrf @method('PATCH')
-                                        <input type="hidden" name="action" value="cancel">
+                                        <input type="hidden" name="action" value="decline">
                                         <button type="submit" style="width: 100%; padding: 14px 20px; background: #ef4444; color: white; border: 2px solid #000; border-radius: 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 200ms ease; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translate(0,0)'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';">✕ Decline</button>
                                     </form>
                                 </div>

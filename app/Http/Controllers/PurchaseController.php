@@ -178,7 +178,49 @@ class PurchaseController extends Controller
             ]);
 
             return redirect()->route('purchases.show', $purchase)->with('success', 'Purchase accepted.');
-        } 
+        }
+        elseif ($action === 'decline') {
+            // Only seller can decline
+            if (Auth::id() !== $purchase->seller_id) {
+                abort(403, 'Only the seller can decline this purchase');
+            }
+
+            if ($purchase->status !== 'pending') {
+                return redirect()->back()->with('error', 'You can only decline pending purchases.');
+            }
+
+            // Refund coins to buyer
+            DB::transaction(function () use ($purchase) {
+                $buyer = User::lockForUpdate()->find($purchase->buyer_id);
+                
+                // Refund coins
+                $buyer->increment('coins', $purchase->amount);
+
+                // Record refund transaction
+                CoinTransaction::create([
+                    'user_id' => $buyer->id,
+                    'type' => 'credit',
+                    'amount' => $purchase->amount,
+                    'reason' => 'Listing Request Declined - ' . $purchase->userSkill->skill->name,
+                    'reference_id' => 'listing_declined_' . $purchase->id,
+                    'status' => 'success',
+                ]);
+
+                // Update purchase status
+                $purchase->update(['status' => 'declined']);
+            });
+
+            // Notify buyer about decline
+            Notification::create([
+                'user_id' => $purchase->buyer_id,
+                'purchase_id' => $purchase->id,
+                'type' => 'purchase_declined',
+                'title' => 'Purchase Request Declined',
+                'message' => $purchase->seller->name . ' declined your purchase request for ' . $purchase->userSkill->skill->name . '.',
+            ]);
+
+            return redirect()->route('purchases.show', $purchase)->with('success', 'Purchase declined. ' . number_format($purchase->amount, 2) . ' coins have been refunded to the buyer.');
+        }
         elseif ($action === 'complete') {
             // Only seller can mark work as complete
             if (Auth::id() !== $purchase->seller_id) {
