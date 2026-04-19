@@ -71,7 +71,7 @@
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: #1040C0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">{{ substr($purchase->buyer->name, 0, 1) }}</div>
                                     <div>
                                         <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->buyer->name }}</p>
-                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">@{{ $purchase->buyer->username }}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">{{ $purchase->buyer->username }}</p>
                                     </div>
                                 </div>
 
@@ -132,7 +132,7 @@
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">{{ substr($purchase->buyer->name, 0, 1) }}</div>
                                     <div>
                                         <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->buyer->name }}</p>
-                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">@{{ $purchase->buyer->username }}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">{{ $purchase->buyer->username }}</p>
                                     </div>
                                 </div>
 
@@ -191,13 +191,13 @@
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">{{ substr($purchase->buyer->name, 0, 1) }}</div>
                                     <div>
                                         <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->buyer->name }}</p>
-                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">@{{ $purchase->buyer->username }}</p>
+                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">{{ $purchase->buyer->username }}</p>
                                     </div>
                                 </div>
 
                                 <!-- Level & Amount -->
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-                                    <span style="font-size: 12px; font-weight: 700; background: #f0fdf4; padding: 4px 8px; border-radius: 4px; color: #10b981;">✓ Completed</span>
+                                    <span style="font-size: 12px; font-weight: 700; background: #f0fdf4; padding: 4px 8px; border-radius: 4px; color: #10b981;">Completed</span>
                                     <span style="font-size: 14px; font-weight: 900; color: #10b981;">₹{{ number_format($purchase->amount, 0) }}</span>
                                 </div>
 

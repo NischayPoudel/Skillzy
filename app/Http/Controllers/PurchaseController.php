@@ -26,10 +26,8 @@ class PurchaseController extends Controller
 
     public function index(Request $request): View
     {
-        $purchases = Purchase::where(function ($query) {
-            $query->where('buyer_id', Auth::id())
-                  ->orWhere('seller_id', Auth::id());
-        })
+        // Only show purchases where the current user is the buyer
+        $purchases = Purchase::where('buyer_id', Auth::id())
         ->where('status', '!=', 'cancelled')
         ->with('buyer', 'seller', 'userSkill.skill')
         ->latest()

@@ -115,7 +115,7 @@
                                         </a>
                                         
                                         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-                                            <span style="font-size: 12px; font-weight: 700; color: #1f2937;">₹{{ number_format($listing->price, 0) }}</span>
+                                            <span style="font-size: 12px; font-weight: 700; color: #1f2937;">{{ number_format($listing->price, 0) }} coins</span>
                                             <span style="font-size: 11px; background: #f0f0f0; padding: 3px 6px; border-radius: 4px; color: #6b7280; text-transform: uppercase;">{{ ucfirst($listing->experience_level) }}</span>
                                         </div>
                                         

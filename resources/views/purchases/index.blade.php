@@ -41,12 +41,6 @@
                             <!-- Skill Name -->
                             <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1040C0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $purchase->userSkill->skill->name }}</h3>
                             
-                            <!-- Buyer Info -->
-                            <div>
-                                <p style="margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px;">Buyer</p>
-                                <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #1f2937;">{{ $purchase->buyer->name }}</p>
-                            </div>
-
                             <!-- Seller Info -->
                             <div>
                                 <p style="margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.5px;">Seller</p>
