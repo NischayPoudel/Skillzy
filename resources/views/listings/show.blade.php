@@ -56,6 +56,14 @@
                     <p style="color: #4b5563; font-size: 16px; line-height: 1.8; margin: 0;">{{ $listing->skill->description }}</p>
                 </div>
 
+                <!-- Listing Description Section -->
+                @if($listing->description)
+                    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 40px; margin-bottom: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 2px solid #0ea5e9; transition: all 300ms ease;" onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'">
+                        <h2 style="font-size: 22px; font-weight: 800; color: #0369a1; margin: 0 0 16px 0; letter-spacing: -0.5px;">What I offer</h2>
+                        <p style="color: #0c4a6e; font-size: 16px; line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ $listing->description }}</p>
+                    </div>
+                @endif
+
                 <!-- Key Details Grid -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px;">
                     <!-- Price Card -->

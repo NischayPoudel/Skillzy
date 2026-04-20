@@ -15,6 +15,7 @@ class UserSkill extends Model
         'price',
         'experience_level',
         'status',
+        'description',
     ];
 
     protected $casts = [

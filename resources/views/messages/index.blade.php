@@ -48,7 +48,7 @@
                                 
                                 <!-- Time -->
                                 <span style="font-size: 12px; color: #9ca3af; white-space: nowrap; flex: 0 0 auto;">
-                                    {{ $message->created_at->format('H:i') }}
+                                    {{ $message->created_at->setTimezone('Asia/Kathmandu')->format('M d, H:i') }}
                                 </span>
                             </a>
                         @endforeach

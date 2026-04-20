@@ -3,15 +3,31 @@
     'purchase' => null,
     'receiverId' => null,
     'receiverName' => null,
+    'user' => null,
 ])
 
 @php
-    $user = Auth::user();
-    $isOwner = $listing ? $listing->user_id === $user->id : false;
+    $authUser = Auth::user();
+    
+    // Check if owner
+    $isOwner = false;
+    if ($authUser && $listing) {
+        $isOwner = $listing->user_id === $authUser->id;
+    }
+    
+    // If 'user' prop is provided (from profile page), set receiverId
+    if ($user && !$receiverId) {
+        $receiverId = $user->id;
+        $receiverName = $user->name;
+    }
+    
+    // Determine if message button should be shown
+    $canMessage = $authUser && !$isOwner && ($receiverId ? $authUser->id !== $receiverId : true);
+    
     $uniqueId = uniqid('message-modal-');
 @endphp
 
-@if(!$isOwner)
+@if($canMessage)
     <!-- Message Button -->
     <button 
         type="button"
@@ -40,13 +56,15 @@
             <p style="margin: 0 0 24px 0; font-size: 14px; color: #6b7280;">
                 @if($listing)
                     Message @if($listing->user->name){{ $listing->user->name }}@endif about their {{ $listing->skill->name }} skill
+                @elseif($receiverName)
+                    Message {{ $receiverName }}
                 @else
                     Message the user
                 @endif
             </p>
 
             <!-- Message Form -->
-            <form method="POST" action="{{ route('messages.store') }}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
+            <form method="POST" action="{{ route('messages.store') }}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;" onsubmit="return validateModalMessage(this, '{{ $uniqueId }}');">
                 @csrf
 
                 <!-- Hidden Fields -->
@@ -55,10 +73,8 @@
                     <input type="hidden" name="receiver_id" value="{{ $listing->user_id }}">
                 @elseif($purchase)
                     <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
-                @else
-                    @if($receiverId)
-                        <input type="hidden" name="receiver_id" value="{{ $receiverId }}">
-                    @endif
+                @elseif($receiverId)
+                    <input type="hidden" name="receiver_id" value="{{ $receiverId }}">
                 @endif
 
                 <!-- Photo Upload -->
@@ -69,6 +85,7 @@
                         name="attachment" 
                         id="photo-upload-{{ $uniqueId }}"
                         accept="image/*"
+                        class="modal-file-input"
                         style="padding: 10px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 200ms ease-out;"
                         onchange="previewImage(this, '{{ $uniqueId }}');">
                     <div id="photo-preview-{{ $uniqueId }}" style="display: none; margin-top: 12px;">
@@ -82,6 +99,8 @@
                     <label style="font-size: 14px; font-weight: 600; color: #1f2937;">Your Message (Optional)</label>
                     <textarea 
                         name="message" 
+                        id="modal-message-{{ $uniqueId }}"
+                        class="modal-message-input"
                         placeholder="Type your message here..."
                         style="padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 100px; transition: all 200ms ease-out;"
                         onfocus="this.style.borderColor='#1040C0'; this.style.boxShadow='0 0 0 3px rgba(16, 64, 192, 0.08)';"
@@ -94,6 +113,8 @@
                         {{ $errors->first('message') }}
                     </div>
                 @endif
+                
+                <div id="modal-error-{{ $uniqueId }}" style="display: none; padding: 12px; background: #fee2e2; border-left: 4px solid #dc2626; border-radius: 4px; color: #991b1b; font-size: 14px;"></div>
 
                 <!-- Buttons -->
                 <div style="display: flex; gap: 12px; margin-top: 8px;">
@@ -150,6 +171,30 @@
             const preview = document.getElementById('photo-preview-' + uniqueId);
             input.value = '';
             preview.style.display = 'none';
+        }
+
+        function validateModalMessage(form, uniqueId) {
+            const messageInput = document.getElementById('modal-message-' + uniqueId);
+            const fileInput = document.getElementById('photo-upload-' + uniqueId);
+            const errorDiv = document.getElementById('modal-error-' + uniqueId);
+            
+            const messageEmpty = !messageInput.value || messageInput.value.trim() === '';
+            const fileSelected = fileInput.files && fileInput.files.length > 0;
+            
+            if (messageEmpty && !fileSelected) {
+                errorDiv.textContent = 'Please enter a message or attach a photo';
+                errorDiv.style.display = 'block';
+                messageInput.style.borderColor = '#dc2626';
+                messageInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+                messageInput.focus();
+                setTimeout(() => {
+                    messageInput.style.borderColor = '#e5e7eb';
+                    messageInput.style.boxShadow = 'none';
+                    errorDiv.style.display = 'none';
+                }, 3000);
+                return false;
+            }
+            return true;
         }
 
         // Close modal when clicking outside

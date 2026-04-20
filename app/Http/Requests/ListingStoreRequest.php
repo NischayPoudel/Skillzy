@@ -26,6 +26,7 @@ class ListingStoreRequest extends FormRequest
             'skill_id' => 'required|exists:skills,id',
             'price' => 'required|numeric|min:0.01|max:999999.99',
             'experience_level' => 'required|in:beginner,intermediate,expert',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }

@@ -119,12 +119,27 @@
                                             <span style="font-size: 11px; background: #f0f0f0; padding: 3px 6px; border-radius: 4px; color: #6b7280; text-transform: uppercase;">{{ ucfirst($listing->experience_level) }}</span>
                                         </div>
                                         
-                                        <!-- Message Button -->
+                                        <!-- Message Button or Edit/Delete for Own Listings -->
                                         @auth
-                                            @if(Auth::user()->id !== $listing->user_id)
+                                            @if(Auth::user()->id === $listing->user_id)
+                                                <!-- Own Listing - Show Edit and Delete Buttons -->
+                                                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                                    <a href="{{ route('user.listings.edit', $listing) }}" style="flex: 1; padding: 10px; background: #F0C020; color: #121212; border: 2px solid #121212; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; transition: all 200ms ease-out;" onmouseover="this.style.background='#E5B212'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#F0C020'; this.style.transform='translateY(0)';">Edit</a>
+                                                    <form method="POST" action="{{ route('user.listings.destroy', $listing) }}" style="flex: 1;" onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" style="width: 100%; padding: 10px; background: #D02020; color: white; border: 2px solid #121212; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 200ms ease-out;" onmouseover="this.style.background='#B01818'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#D02020'; this.style.transform='translateY(0)';">Delete</button>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <!-- Other User's Listing - Show Message Button -->
                                                 <x-message-modal :listing="$listing" />
                                             @endif
                                         @endauth
+                                        @guest
+                                            <!-- Guest - Show Login to Message Button -->
+                                            <a href="{{ route('login') }}" style="display: block; padding: 10px 16px; background: #1040C0; color: white; border: 2px solid #1040C0; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; transition: all 200ms ease-out;" onmouseover="this.style.background='#0D32A4'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1040C0'; this.style.transform='translateY(0)';">Login to Message</a>
+                                        @endguest
                                     </div>
                                 </div>
                             @empty

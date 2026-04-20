@@ -20,7 +20,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('profile.edit', $otherUser) }}" style="padding: 8px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb';" onmouseout="this.style.background='#f3f4f6';">
+            <a href="{{ route('profile.public', $otherUser) }}" style="padding: 8px 16px; background: #f3f4f6; color: #1040C0; border: 2px solid #1040C0; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 200ms ease;" onmouseover="this.style.background='#e5e7eb';" onmouseout="this.style.background='#f3f4f6';">
                 View Profile
             </a>
         </div>
@@ -45,9 +45,48 @@
                             @endif
                             
                             @if($message->userSkill)
-                                <p style="font-size: 11px; color: #9ca3af; margin: 0; {{ $isOwn ? 'text-align: right;' : '' }}">
-                                    About: {{ $message->userSkill->skill->name }}
-                                </p>
+                                <!-- Listing Card -->
+                                <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 12px; max-width: 300px; display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+                                    <!-- Skill Icon/Image -->
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #1040C0 0%, #0D32A4 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: white; flex-shrink: 0;">
+                                            @php
+                                                $skillLetters = [
+                                                    'Web Development' => 'W',
+                                                    'PHP Development' => 'P',
+                                                    'Digital Marketing' => 'D',
+                                                    'Business Consulting' => 'B',
+                                                    'API Development' => 'A',
+                                                    'Graphic Design' => 'G',
+                                                    'Content Writing' => 'C',
+                                                    'Video Editing' => 'V',
+                                                    'UI/UX Design' => 'U',
+                                                    'Data Analysis' => 'DA',
+                                                ];
+                                                $skillName = $message->userSkill->skill->name;
+                                                $letter = $skillLetters[$skillName] ?? substr($skillName, 0, 1);
+                                            @endphp
+                                            {{ $letter }}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <p style="font-weight: 700; color: #1f2937; margin: 0 0 2px 0; font-size: 13px;">{{ $message->userSkill->skill->name }}</p>
+                                            <p style="font-size: 11px; color: #9ca3af; margin: 0;">by {{ $message->userSkill->user->name }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Price and Level -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                        <div style="display: flex; align-items: baseline; gap: 4px;">
+                                            <span style="font-size: 16px; font-weight: 700; color: #1040C0;">₹{{ number_format($message->userSkill->price, 0) }}</span>
+                                            <span style="font-size: 10px; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; color: #6b7280; text-transform: uppercase; font-weight: 600;">{{ ucfirst($message->userSkill->experience_level) }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- View Details Link -->
+                                    <a href="{{ route('listings.show', $message->userSkill) }}" style="display: block; text-align: center; padding: 8px 12px; background: #1040C0; color: white; border: none; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 200ms ease;" onmouseover="this.style.background='#0D32A4';" onmouseout="this.style.background='#1040C0';">
+                                        View Details
+                                    </a>
+                                </div>
                             @elseif($message->purchase)
                                 <p style="font-size: 11px; color: #9ca3af; margin: 0; {{ $isOwn ? 'text-align: right;' : '' }}">
                                     Purchase: #{{ $message->purchase->id }}
@@ -55,7 +94,7 @@
                             @endif
                             
                             <p style="font-size: 11px; color: #bfcad3; margin: 0; {{ $isOwn ? 'text-align: right;' : '' }}">
-                                {{ $message->created_at->format('H:i') }}
+                                {{ $message->created_at->setTimezone('Asia/Kathmandu')->format('M d, Y H:i') }}
                             </p>
                         </div>
                     </div>
@@ -69,7 +108,15 @@
 
         <!-- Message Input -->
         <div style="background: white; border-top: 1px solid #e5e7eb; padding: 16px 24px; flex: 0 0 auto;">
-            <form method="POST" action="{{ route('messages.store') }}" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 12px;">
+            @if($errors->any())
+                <div style="margin-bottom: 12px; padding: 12px; background: #fee2e2; border-left: 4px solid #dc2626; border-radius: 4px; color: #991b1b; font-size: 14px;">
+                    @foreach($errors->all() as $error)
+                        <p style="margin: 0 0 4px 0;">{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('messages.store') }}" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 12px;" onsubmit="return validateMessage(event);">
                 @csrf
                 <input type="hidden" name="receiver_id" value="{{ $otherUser->id }}">
                 
@@ -91,6 +138,7 @@
                 
                 <textarea 
                     name="message" 
+                    id="message-input"
                     placeholder="Aa"
                     style="flex: 1; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 20px; font-size: 14px; font-family: inherit; resize: none; min-height: 40px; max-height: 160px; transition: all 200ms ease;" 
                     onfocus="this.style.borderColor='#1040C0'; this.style.boxShadow='0 0 0 3px rgba(16, 64, 192, 0.1)';" 
@@ -104,6 +152,30 @@
                     Send
                 </button>
             </form>
+
+            <script>
+                function validateMessage(event) {
+                    const messageInput = document.getElementById('message-input');
+                    const fileInput = document.getElementById('photo-input');
+                    
+                    const messageEmpty = !messageInput.value || messageInput.value.trim() === '';
+                    const fileSelected = fileInput.files && fileInput.files.length > 0;
+                    
+                    if (messageEmpty && !fileSelected) {
+                        event.preventDefault();
+                        alert('Please enter a message or attach a photo');
+                        messageInput.focus();
+                        messageInput.style.borderColor = '#dc2626';
+                        messageInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+                        setTimeout(() => {
+                            messageInput.style.borderColor = '#e5e7eb';
+                            messageInput.style.boxShadow = 'none';
+                        }, 2000);
+                        return false;
+                    }
+                    return true;
+                }
+            </script>
         </div>
     </div>
 

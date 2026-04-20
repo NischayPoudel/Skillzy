@@ -27,6 +27,7 @@ class ListingUpdateRequest extends FormRequest
             'price' => 'required|numeric|min:0.01|max:999999.99',
             'experience_level' => 'required|in:beginner,intermediate,expert',
             'status' => 'required|in:active,inactive',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }

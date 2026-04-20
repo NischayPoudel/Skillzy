@@ -40,6 +40,12 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">{{ __('Description') }}</label>
+                        <textarea name="description" rows="5" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg @error('description') border-red-500 @enderror" placeholder="Describe your skill, experience, and what you can offer...">{{ old('description', $listing->description) }}</textarea>
+                        @error('description') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">{{ __('Status') }}</label>
                         <select name="status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg @error('status') border-red-500 @enderror" required>
                             <option value="active" @if(old('status', $listing->status) === 'active') selected @endif>Active</option>
@@ -48,9 +54,9 @@
                         @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="flex gap-4">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">{{ __('Update') }}</button>
-                        <a href="{{ route('user.listings.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">{{ __('Cancel') }}</a>
+                    <div class="flex gap-4 mt-6 w-full">
+                        <button type="submit" style="background-color: #F0C020 !important; color: #121212 !important; border: 2px solid #121212 !important; flex: 1; width: 100%;" class="py-4 font-bold text-xl rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">{{ __('Update') }}</button>
+                        <a href="{{ route('user.listings.index') }}" style="background-color: #D02020 !important; color: #FFFFFF !important; border: 2px solid #121212 !important; flex: 1; width: 100%; display: flex !important; align-items: center; justify-content: center;" class="py-4 font-bold text-xl rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">{{ __('Cancel') }}</a>
                     </div>
                 </form>
             </div>

@@ -136,7 +136,7 @@
                                 <div style="margin-bottom: 16px; padding: 12px 16px; background: @if($msg->sender_id === auth()->id()) #fff9e6 @else white @endif; border-left: 4px solid @if($msg->sender_id === auth()->id()) #F0C020 @else #000 @endif; border-radius: 0;">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                         <p style="font-size: 13px; font-weight: 700; color: #6b7280; margin: 0;">{{ $msg->sender->name }}</p>
-                                        <p style="font-size: 12px; color: #9ca3af; margin: 0;">{{ $msg->created_at->format('M d, H:i') }}</p>
+                                        <p style="font-size: 12px; color: #9ca3af; margin: 0;">{{ $msg->created_at->setTimezone('Asia/Kathmandu')->format('M d, Y H:i') }}</p>
                                     </div>
                                     <p style="font-size: 14px; color: #1f2937; margin: 0; line-height: 1.6;">{{ $msg->message }}</p>
                                 </div>
@@ -147,15 +147,43 @@
 
                         @auth
                             @if(auth()->id() === $purchase->buyer_id || auth()->id() === $purchase->seller_id)
-                                <form method="POST" action="{{ route('messages.store') }}" style="display: flex; gap: 12px;">
+                                @if($errors->any())
+                                    <div style="margin-bottom: 12px; padding: 12px; background: #fee2e2; border-left: 4px solid #dc2626; border-radius: 0; color: #991b1b; font-size: 14px;">
+                                        @foreach($errors->all() as $error)
+                                            <p style="margin: 0 0 4px 0;">{{ $error }}</p>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <form method="POST" action="{{ route('messages.store') }}" style="display: flex; gap: 12px;" onsubmit="return validatePurchaseMessage(event);">
                                     @csrf
                                     <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
-                                    <input type="text" name="message" placeholder="Type message..." required 
+                                    <input type="text" name="message" id="purchase-message-input" placeholder="Type message..." 
                                         style="flex: 1; padding: 14px 16px; border: 2px solid #000; border-radius: 0; font-size: 14px; font-family: inherit; background: white;" 
                                         onfocus="this.style.borderColor='#F0C020'; this.style.boxShadow='0 0 0 3px rgba(240, 192, 32, 0.2)';" 
                                         onblur="this.style.borderColor='#000'; this.style.boxShadow='none';">
                                     <button type="submit" style="padding: 14px 24px; background: #000; color: #F0C020; border: 2px solid #000; border-radius: 0; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; transition: all 200ms ease; box-shadow: 2px 2px 0 rgba(0,0,0,0.2);" onmouseover="this.style.background='#F0C020'; this.style.color='#000'; this.style.boxShadow='3px 3px 0 rgba(0,0,0,0.2)';" onmouseout="this.style.background='#000'; this.style.color='#F0C020'; this.style.boxShadow='2px 2px 0 rgba(0,0,0,0.2)';">Send</button>
                                 </form>
+
+                                <script>
+                                    function validatePurchaseMessage(event) {
+                                        const messageInput = document.getElementById('purchase-message-input');
+                                        
+                                        if (!messageInput.value || messageInput.value.trim() === '') {
+                                            event.preventDefault();
+                                            alert('Please enter a message');
+                                            messageInput.focus();
+                                            messageInput.style.borderColor = '#dc2626';
+                                            messageInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+                                            setTimeout(() => {
+                                                messageInput.style.borderColor = '#000';
+                                                messageInput.style.boxShadow = 'none';
+                                            }, 2000);
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                </script>
                             @endif
                         @endauth
                     </div>

@@ -25,18 +25,20 @@ class MessageController extends Controller
     {
         $user = Auth::user();
         
-        // Get unique conversations grouped by the other user
+        // Get unique conversations grouped by the other user - only messages where user is sender or receiver
         $conversationPartners = Message::where(function($query) use ($user) {
                 $query->where('sender_id', $user->id)
                       ->orWhere('receiver_id', $user->id);
             })
-            ->with(['sender', 'receiver', 'userSkill', 'purchase'])
+            ->with(['sender', 'receiver', 'userSkill.skill', 'userSkill.user', 'purchase'])
             ->latest()
             ->get()
             ->groupBy(function($message) use ($user) {
+                // Always group by the OTHER user (not the authenticated user)
                 return $message->sender_id === $user->id ? $message->receiver_id : $message->sender_id;
             })
             ->map(function($messages) {
+                // Get the most recent message in each conversation
                 return $messages->first();
             })
             ->values();
@@ -56,18 +58,22 @@ class MessageController extends Controller
     {
         $user = Auth::user();
         $otherUser = \App\Models\User::findOrFail($userId);
+        
+        // Security check: user exists and is valid
+        if (!$otherUser) {
+            abort(404, 'User not found');
+        }
 
-        // Get all messages between these two users
+        // Get all messages between these two users only
         $messages = Message::where(function($query) use ($user, $userId) {
-                $query->where([
-                    ['sender_id', $user->id],
-                    ['receiver_id', $userId]
-                ])->orWhere([
-                    ['sender_id', $userId],
-                    ['receiver_id', $user->id]
-                ]);
+                $query->where('sender_id', $user->id)
+                      ->where('receiver_id', $userId);
             })
-            ->with(['sender', 'receiver', 'userSkill', 'purchase'])
+            ->orWhere(function($query) use ($user, $userId) {
+                $query->where('sender_id', $userId)
+                      ->where('receiver_id', $user->id);
+            })
+            ->with(['sender', 'receiver', 'userSkill.skill', 'userSkill.user', 'purchase'])
             ->oldest()
             ->get();
 
@@ -99,7 +105,13 @@ class MessageController extends Controller
 
         // Ensure either message or attachment is provided
         if (!$request->message && !$request->hasFile('attachment')) {
-            return back()->with('error', 'Please send a message or attach a photo');
+            return back()->withErrors(['message' => 'Please send a message or attach a photo']);
+        }
+
+        // Trim whitespace from message
+        $message = $request->message ? trim($request->message) : null;
+        if ($message === '' && !$request->hasFile('attachment')) {
+            return back()->withErrors(['message' => 'Please send a message or attach a photo']);
         }
 
         $sender = Auth::user();
@@ -133,6 +145,10 @@ class MessageController extends Controller
             if (!$receiver_id) {
                 return back()->with('error', 'Invalid message recipient');
             }
+            // Prevent self-messaging
+            if ($sender->id === $receiver_id) {
+                return back()->with('error', 'You cannot message yourself');
+            }
         }
 
         $attachmentPath = null;
@@ -145,7 +161,7 @@ class MessageController extends Controller
             'user_skill_id' => $user_skill_id,
             'sender_id' => $sender->id,
             'receiver_id' => $receiver_id,
-            'message' => $request->message,
+            'message' => $message,
             'attachment' => $attachmentPath,
         ]);
 
@@ -156,6 +172,6 @@ class MessageController extends Controller
             return back()->with('success', 'Message sent to the skill lister');
         }
 
-        return back()->with('success', 'Message sent successfully');
+        return redirect()->route('messages.show', $receiver_id)->with('success', 'Message sent successfully');
     }
 }
