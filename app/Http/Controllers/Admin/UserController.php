@@ -39,9 +39,21 @@ class UserController extends Controller
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        // Generate unique username from email
+        $baseUsername = strtolower(explode('@', $request->email)[0]);
+        $username = $baseUsername;
+        $counter = 1;
+        
+        // Ensure username is unique
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'username' => $username,
             'password' => bcrypt($request->password),
             'role' => $request->role,
         ];

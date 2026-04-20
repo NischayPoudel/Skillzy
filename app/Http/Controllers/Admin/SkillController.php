@@ -47,6 +47,9 @@ class SkillController extends Controller
             $data['icon'] = 'skills/' . $filename;
         }
 
+        // Set the creator
+        $data['created_by'] = auth()->id();
+
         Skill::create($data);
 
         return redirect()->route('admin.skills.index')->with('success', 'Skill created successfully.');
@@ -93,6 +96,9 @@ class SkillController extends Controller
             $file->storeAs('skills', $filename, 'public');
             $data['icon'] = 'skills/' . $filename;
         }
+
+        // Preserve the original creator
+        unset($data['created_by']);
 
         $skill->update($data);
 
